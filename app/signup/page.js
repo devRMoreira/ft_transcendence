@@ -19,8 +19,20 @@ export default function SignupPage()
 	const [nameError, setNameError] = useState({state: false, msg: ""})
 	const [emailError, setEmailError] = useState({state: false, msg: ""})
 	const [passwordError, setPasswordError] = useState({state: false, msg: ""})
+	const [cpasswordError, setCpasswordError] = useState({state: false, msg: ""})
 	const [error, setError] = useState("")
 	const [loading, setLoading] = useState(false)
+
+	const handleEqualPass = () =>
+	{
+		const password = document.getElementById('password').value
+		const cpassword = document.getElementById('cpassword').value
+
+		if(password !== cpassword)
+			setCpasswordError({state: true, msg: "Passwords don't match"})
+		else
+			setCpasswordError({state: false, msg: ""})
+	}
 
 	const validateInputs = () =>
 	{
@@ -122,12 +134,22 @@ export default function SignupPage()
 						<TextField placeholder="••••••" type="password" id="password"
 						error={passwordError.state} helperText={passwordError.msg}
 						color={passwordError.state ? 'error' : 'primary'}
+						onChange={handleEqualPass}
+						required fullWidth/>
+					</FormControl>
+
+					<FormControl spacing={1}>
+						<FormLabel htmlFor="cpassword">Password Confirmation</FormLabel>
+
+						<TextField placeholder="••••••" type="password" id="cpassword"
+						error={cpasswordError.state} helperText={cpasswordError.msg}
+						color={cpasswordError.state ? 'error' : 'primary'}
+						onChange={handleEqualPass}
 						required fullWidth/>
 					</FormControl>
 
 					<LoadingButton type="submit" loading={loading} onClick={validateInputs}
 					variant="contained" fullWidth>
-
 						Register
 					</LoadingButton>
 
