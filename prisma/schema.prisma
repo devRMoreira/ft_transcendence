@@ -1,0 +1,197 @@
+// 
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// AUTH - NextAuth.js & OAuth-only
+// ============================================================
+
+model User {
+  id           String    @id @default(cuid())
+  name         String?
+  email        String    @unique
+  passwordHash String?   // null if a user only ever signs in via OAuth
+  image        String?   // here for scalability purposes
+  isBot        Boolean   @default(false) // to be used for AI matches, always true otherwise
+  lastSeen     DateTime? // bump on each authenticated request if you add online status later
+
+  createdAt DateTime @default(now())
+
+  accounts Account[] // OAuth related
+  sessions Session[]
+
+  friendRequestsSent     Friendship[] @relation("FriendRequester")
+  friendRequestsReceived Friendship[] @relation("FriendAddressee")
+
+  messagesSent     Message[] @relation("SentMessages")
+  messagesReceived Message[] @relation("ReceivedMessages")
+
+  groupsCreated Group[]           @relation("GroupCreator")
+  memberships   GroupMembership[]
+  posts         Post[]
+
+  matchesAsPlayer1 Match[] @relation("MatchPlayer1")
+  matchesAsPlayer2 Match[] @relation("MatchPlayer2")
+  matchesWon       Match[] @relation("MatchWinner")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ============================================================
+// FRIENDS
+// ============================================================
+
+enum FriendStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model Friendship {
+  id          String       @id @default(cuid())
+  requesterId String
+  addresseeId String
+  status      FriendStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+
+  requester User @relation("FriendRequester", fields: [requesterId], references: [id])
+  addressee User @relation("FriendAddressee", fields: [addresseeId], references: [id])
+
+  @@unique([requesterId, addresseeId])
+}
+
+// ============================================================
+// CHAT - simple DMs not real-time
+// ============================================================
+
+model Message {
+  id         String    @id @default(cuid())
+  senderId   String
+  receiverId String
+  content    String
+  createdAt  DateTime  @default(now())
+  readAt     DateTime?
+
+  sender   User @relation("SentMessages", fields: [senderId], references: [id])
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id])
+}
+
+// ============================================================
+// GROUPS (organization system)
+// ============================================================
+
+enum GroupRole {
+  ADMIN
+  MEMBER
+}
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdById String
+  createdAt   DateTime @default(now())
+
+  createdBy User              @relation("GroupCreator", fields: [createdById], references: [id])
+  members   GroupMembership[]
+  posts     Post[]
+}
+
+model GroupMembership {
+  id       String    @id @default(cuid())
+  groupId  String
+  userId   String
+  role     GroupRole @default(MEMBER)
+  joinedAt DateTime  @default(now())
+
+  group Group @relation(fields: [groupId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@unique([groupId, userId])
+}
+
+model Post {
+  id             String    @id @default(cuid())
+  groupId        String
+  authorId       String
+  content        String
+  isAnnouncement Boolean   @default(false) // group admins can flag a post as an announcement
+  createdAt      DateTime  @default(now())
+  editedAt       DateTime?
+
+  group  Group @relation(fields: [groupId], references: [id])
+  author User  @relation(fields: [authorId], references: [id])
+
+  // to speed up "latest announcement for this group" query (findFirst where isAnnouncement,
+  // orderBy createdAt desc) and the regular feed query.
+  @@index([groupId, isAnnouncement, createdAt])
+}
+
+// ============================================================
+// CARDS
+// ============================================================
+
+model Card {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  imageUrl    String?
+  description String?
+  type        String?
+
+  atk          Int
+  def          Int
+  spd          Int
+  wis	       Int
+
+  @@index([type])
+}
+
+// ============================================================
+// MATCHES - final result only, not round-by-round
+// ============================================================
+
+model Match {
+  id        String   @id @default(cuid())
+  player1Id String
+  player2Id String   // for AI matches, points at the reserved User with isBot = true
+  winnerId  String?  // null for draws, probably never happening but kept just in case
+  isVsAI    Boolean  @default(false)
+  playedAt  DateTime @default(now())
+
+  player1 User  @relation("MatchPlayer1", fields: [player1Id], references: [id])
+  player2 User  @relation("MatchPlayer2", fields: [player2Id], references: [id])
+  winner  User? @relation("MatchWinner", fields: [winnerId], references: [id])
+
+  // if tournamnets are implemented add a tournamentRoundId field
+}
