@@ -1,4 +1,4 @@
-// 
+//
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,7 +13,7 @@ datasource db {
 
 model User {
   id           String    @id @default(cuid())
-  name         String?
+  name         String?   @unique
   email        String    @unique
   passwordHash String?   // null if a user only ever signs in via OAuth
   image        String?   // here for scalability purposes
