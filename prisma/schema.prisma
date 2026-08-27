@@ -167,14 +167,14 @@ model Card {
   name        String  @unique
   imageUrl    String?
   description String?
-  type        String?
+  rarity      String?
 
   atk          Int
   def          Int
   spd          Int
   wis	       Int
 
-  @@index([type])
+  @@index([rarity])
 }
 
 // ============================================================

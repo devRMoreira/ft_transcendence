@@ -7,7 +7,7 @@ const DEV_USERS = [
 ];
 
 const cards = [
-  // { name: "...", type: "...", description: "...", imageUrl: "/cards/....png", atk: 0, def: 0, spd: 0, wis: 0 },
+  // { name: "Card 1", rarity: "...", description: "...", imageUrl: "/cards/....png", atk: 0, def: 0, spd: 0, wis: 0 },
 ];
 
 async function seedDevUsers() {
@@ -17,7 +17,7 @@ async function seedDevUsers() {
     const passwordHash = await bcrypt.hash(user.password, 10);
     await prisma.user.upsert({
       where: { email: user.email },
-      update: {}, // leave it alone if it already exists 
+      update: {}, // leave it alone if it already exists
       create: {
         email: user.email,
         passwordHash,
