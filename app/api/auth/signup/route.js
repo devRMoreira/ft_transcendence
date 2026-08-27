@@ -3,9 +3,6 @@ import bcrypt from "bcryptjs"
 
 const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
-//one upper case letter, one lower case letter,one number, and one special character
-const PASS_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-
 export async function POST(request)
 {
 	let body
@@ -33,7 +30,7 @@ export async function POST(request)
 			{ error: "Invalid email"},
 			{ status : 400})
 
-	if(!PASS_REGEX.test(password))
+	if(password.length < 15)
 		return Response.json(
 			{ error: "Password doesn't meet criteria"},
 			{ status : 400})
