@@ -62,7 +62,8 @@ export default function SignupPage()
 	async function handleSubmit(e)
 	{
 		e.preventDefault()
-		setError("")
+
+		setError({name: "", email: "", password: "", cpassword: "", page:""})
 
 		const data = {
 			name: form.name.trim(),
@@ -77,8 +78,6 @@ export default function SignupPage()
 		setLoading(true)
 
 		const res = await signupSubmit(data)
-
-
 
 		if(!res.ok)
 		{
