@@ -4,69 +4,57 @@ import LoadingButton from "@/components/LoadingButton"
 import { Alert, Box, Container, FormControl, FormLabel, Link, Paper, Stack, TextField, Typography } from "@mui/material"
 import { useState } from "react"
 import NextLink from "next/link";
-import { signupSubmit } from "../../services/auth";
+import { signupSubmit } from "../../services/signup";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-
-//one upper case letter, one lower case letter,one number, and one special character
-const PASS_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
 const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
 export default function SignupPage()
 {
 	const router = useRouter()
-	const [nameError, setNameError] = useState({state: false, msg: ""})
-	const [emailError, setEmailError] = useState({state: false, msg: ""})
-	const [passwordError, setPasswordError] = useState({state: false, msg: ""})
-	const [cpasswordError, setCpasswordError] = useState({state: false, msg: ""})
-	const [error, setError] = useState("")
+
+	const [form, setForm] = useState({name: "", email: "", password: "", cpassword: ""})
+	const [error, setError] = useState({name: "", email: "", password: "", cpassword: "", page:""})
+
 	const [loading, setLoading] = useState(false)
 
-	const handleEqualPass = () =>
-	{
-		const password = document.getElementById('password').value
-		const cpassword = document.getElementById('cpassword').value
+	const handleOnChange = (e) => {
+		const {name, value} = e.target
 
-		if(password !== cpassword)
-			setCpasswordError({state: true, msg: "Passwords don't match"})
-		else
-			setCpasswordError({state: false, msg: ""})
+		setForm(prev => ({...prev, [name]: value}))
+		setError(prev => ({...prev, [name]: ""}))
 	}
 
-	const validateInputs = () =>
-	{
-		const name = document.getElementById('name')
-		const email = document.getElementById('email')
-		const password = document.getElementById('password')
+	const addError = (field, msg) => {setError(prev => ({...prev, [field]: msg}))}
 
+	const validateInputs = ({name, email, password, cpassword}) =>
+	{
 		let isValid = true
 
-		if(!name.value || name.value.length > 32)
+		if(!name || name.length > 32)
 		{
-			setNameError({state: true, msg: "Please enter a valid name. Maximum 32 characters."})
+			addError("name", "Please enter a valid name. Maximum 32 characters.")
 			isValid = false
 		}
-		else
-			setNameError({state: false, msg: ""})
 
-		if(!email.value || !EMAIL_REGEX.test(email.value))
+		if(!email || !EMAIL_REGEX.test(email))
 		{
-			setEmailError({state: true, msg: "Please enter a valid email address."})
+			addError("email", "Please enter a valid email address.")
 			isValid = false
 		}
-		else
-			setEmailError({state: false, msg: ""})
 
-		if(!password.value || !PASS_REGEX.test(password.value))
+		if(!password || password.length < 15)
 		{
-			setPasswordError({state: true, msg: "Please enter a valid password."})
+			addError("password", "Please enter a valid password.")
 			isValid = false
 		}
-		else
-			setPasswordError({state: false, msg: ""})
 
-
+		if(password != cpassword)
+		{
+			addError("cpassword", "Passwords don't match")
+			isValid = false
+		}
 
 		return isValid
 	}
@@ -76,20 +64,42 @@ export default function SignupPage()
 		e.preventDefault()
 		setError("")
 
+		const data = {
+			name: form.name.trim(),
+			email: form.email.trim(),
+			password: form.password.trim(),
+			cpassword: form.cpassword.trim(),
+		}
+
+		if(!validateInputs(data))
+			return
+
 		setLoading(true)
 
-		// const res = await signupSubmit(, email, password)
+		const res = await signupSubmit(data)
 
 
-		setLoading(false)
 
-		if(res)
+		if(!res.ok)
 		{
-			setError(res)
+			setLoading(false)
+			addError("page", res.error || "Something went wrong")
 			return
 		}
 
-		await signIn("credentials", {email, password, redirect:false});
+		const email = data.email
+		const password = data.password
+
+		const signStatus = await signIn("credentials", {email, password, redirect:false})
+
+		setLoading(false)
+
+		if(signStatus?.error)
+		{
+			router.push("/login")
+			return
+		}
+
 		router.push("/")
 		router.refresh()
 	}
@@ -108,47 +118,54 @@ export default function SignupPage()
 						Registration
 					</Typography>
 
-					{error && <Alert severity="error">{error}</Alert>}
+					{error.page && <Alert severity="error">{error.page}</Alert>}
 
 					<FormControl spacing={1}>
 						<FormLabel htmlFor="name">Display name</FormLabel>
 
-						<TextField placeholder="John Doe" type="name" id="name"
-						error={nameError.state} helperText={nameError.msg}
-						color={nameError.state ? 'error' : 'primary'}
+						<TextField name="name" type="name"
+						placeholder="John Doe"
+						error={error.name} helperText={error.name ? error.name : "Enter a unique username"}
+						color={error.name ? 'error' : 'primary'}
+						onChange={handleOnChange}
 						required fullWidth/>
 					</FormControl>
 
 					<FormControl spacing={1}>
 						<FormLabel htmlFor="email">Email</FormLabel>
 
-						<TextField placeholder="your@email.com" type="email" id="email"
-						error={emailError.state} helperText={emailError.msg}
-						color={emailError.state ? 'error' : 'primary'}
-						required fullWidth autoComplete="email"/>
+						<TextField name="email" type="email"
+						placeholder="your@email.com" autoComplete="email"
+						error={error.email} helperText={error.email}
+						color={error.email ? 'error' : 'primary'}
+						onChange={handleOnChange}
+						required fullWidth/>
 					</FormControl>
 
 					<FormControl spacing={1}>
 						<FormLabel htmlFor="password">Password</FormLabel>
 
-						<TextField placeholder="••••••" type="password" id="password"
-						error={passwordError.state} helperText={passwordError.msg}
-						color={passwordError.state ? 'error' : 'primary'}
-						onChange={handleEqualPass}
+						<TextField name="password" type="password"
+						placeholder="••••••"
+						error={error.password} helperText={error.password ? error.password : "Must be at least 15 characters long."}
+						color={error.password ? 'error' : 'primary'}
+						onChange={handleOnChange}
 						required fullWidth/>
+
 					</FormControl>
 
 					<FormControl spacing={1}>
 						<FormLabel htmlFor="cpassword">Password Confirmation</FormLabel>
 
-						<TextField placeholder="••••••" type="password" id="cpassword"
-						error={cpasswordError.state} helperText={cpasswordError.msg}
-						color={cpasswordError.state ? 'error' : 'primary'}
-						onChange={handleEqualPass}
+						<TextField name="cpassword" type="password"
+						placeholder="••••••"
+						error={error.cpassword} helperText={error.cpassword}
+						color={error.cpassword ? 'error' : 'primary'}
+						onChange={handleOnChange}
 						required fullWidth/>
 					</FormControl>
 
-					<LoadingButton type="submit" loading={loading} onClick={validateInputs}
+					<LoadingButton type="submit" loading={loading}
 					variant="contained" fullWidth>
 						Register
 					</LoadingButton>
