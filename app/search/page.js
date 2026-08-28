@@ -26,8 +26,8 @@ export default function SearchPage()
                 p: 1,
                 display: "flex",
                 justifyContent: "center",
-                maxHeight: "10dvh",
-                widht: "100%"
+                height: "clamp(10dvh, 10dvh, 90px)",
+                width: "100%"
             }}>
                 <Button variant="contained">
                     <SearchRoundedIcon></SearchRoundedIcon>
@@ -40,7 +40,9 @@ export default function SearchPage()
                 background: "black",
                 display: "flex",
             }}>
-                <CardDisplay/>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
                 <CardDisplay/>
                 <CardDisplay/>
                 <CardDisplay/>
