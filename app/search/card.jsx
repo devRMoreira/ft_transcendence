@@ -11,8 +11,8 @@ export default function CardDisplay()
     return (
         <Card elevation={5} sx={{
           aspectRatio: 5/7,
-          width: 'clamp(90px, 10dvw, 250px)',
-          border: 5,
+          width: 'clamp(90px, 8dvw, 220px)',
+          border: 2,
           borderColor: "goldenrod",
           background: "gray",
           }}>

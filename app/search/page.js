@@ -21,60 +21,114 @@ import CardDisplay from "./card";
 export default function SearchPage()
 {
     return(
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" sx={{p: 0}}>
             <Box sx={{ 
-                p: 1,
+                p: 2,
                 display: "flex",
                 justifyContent: "center",
-                height: "clamp(10dvh, 10dvh, 90px)",
+                height: "clamp(10px, 10dvh)",
                 width: "100%"
             }}>
                 <Button variant="contained">
                     <SearchRoundedIcon></SearchRoundedIcon>
                 </Button>
-                <TextField placeholder="Search card names" sx={{
-   
-                }}></TextField>
+                <TextField placeholder="Search card names" sx={{}}/>
             </Box>
-            <Grid container spacing={3} sx={{
-                background: "black",
-                display: "flex",
+            <Grid container spacing={0.5}  sx={{
+                p: 0,
+                justifyContent: "center",
             }}>
                 <Grid>
                     <CardDisplay/>
                 </Grid>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>
-                <CardDisplay/>            
-            </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+                <Grid>
+                    <CardDisplay/>
+                </Grid>
+           </Grid>
         </Container>
-        
-        
     );
 }
