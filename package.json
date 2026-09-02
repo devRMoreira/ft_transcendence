@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "game": "node --env-file=.env lib/game/game.js"
   },
   "type": "module",
   "dependencies": {
