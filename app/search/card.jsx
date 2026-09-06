@@ -11,95 +11,101 @@ export default function CardDisplay()
   return (
       <Card elevation={5} sx={{
         aspectRatio: 5/7,
-        width: 'clamp(90px, 8dvw, 220px)',
+        width: 'clamp(85px, 8dvw, 95px)',
         border: 2,
         borderColor: "goldenrod",
         background: "gray",
+        display: "flex",
+        flexDirection: "column",
         }}>
         <CardMedia component="img" image={card.imageUrl} sx={{
-          aspectRatio: 10/8,
-          width: '100%',
+          flex: "0 0 56%", //rougly same as aspectRatio: 5/4,
           }}/>
           <CardContent sx={{
             p: 0,
+            "&:last-child": { pb: 0 }, 
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            minHeight: 0,
             }}>
-            <Stack>
-              <Box sx={{background: "goldenrod",}}>
+            <Stack sx={{ flex: 1, minHeight: 0,}}>
+              <Box sx={{background: "goldenrod", justifyContent: "center", }}>
                 <Typography sx={{
-                  lineHeight: 1,
+                  textShadow: "1px 1px 2px rgba(0,0,0,0.6)",
+                  lineHeight: 1.2,
                   textAlign: "center",
-                  fontSize: "0.9em",
+                  fontSize: "0.8em",
                   fontWeight: "bold",
                   py: 0.3
                   }}> {/* CARD NAME */}
                   {card.name}
                 </Typography>
               </Box>
-              <Stack direction="row" sx={{
-                fontSize: "0.6rem", "& .MuiTypography-root": { fontSize: "inherit" }}}>
-                <Stack sx={{
-                  flex: 1,
-                  // border: 3,
-                  borderColor: "rgba(255,255,255,0.25)",
-                  background: '#7f1d1d',
-                  textAlign: "center",
-                  color: "white",
-                  }}>
-                  <Typography>
-                    ATK
-                  </Typography>
-                  <Typography sx={{fontWeight: "bold"}}>
-                    {card.atk}
-                  </Typography>
+              <Box sx={{ flex: 1, display: "flex", alignItems: "stretch"}}>
+                <Stack direction="row" sx={{flex: 1, display: "flex", alignItems: "stretch", width: "100%", fontSize: "0.5rem", "& .MuiTypography-root": { fontSize: "inherit" }}}>
+                  <Stack sx={{
+                    flex: 1,
+                    background: '#7f1d1d',
+                    textAlign: "center",
+                    color: "white",
+                    justifyContent: "center", 
+                    }}>
+                    <Typography sx={{textShadow: "1px 1px 2px rgba(0,0,0,0.6)",}}>
+                      ATK
+                    </Typography>
+                    <Typography sx={{fontWeight: "bold", textShadow: "1px 1px 2px rgba(0,0,0,0.6)",}}>
+                      {card.atk}
+                    </Typography>
+                  </Stack>
+                  <Stack sx={{
+                    flex: 1,
+                    background: '#1e3a8a',
+                    textAlign: "center",
+                    color: "white",
+                    justifyContent: "center", 
+                    }}>
+                    <Typography sx={{textShadow: "1px 1px 2px rgba(0,0,0,0.6)",}}>
+                      DEF
+                    </Typography>
+                    <Typography sx={{fontWeight: "bold", textShadow: "1px 1px 2px rgba(0,0,0,0.6)",}}>
+                      {card.def}
+                    </Typography>
+                  </Stack>
+                  <Stack sx={{
+                    flex: 1,                  
+                    background: '#B88A00',
+                    textAlign: "center",
+                    color: "white",
+                    justifyContent: "center", 
+                    }}>
+                    <Typography sx={{textShadow: "1px 1px 2px rgba(0,0,0,0.6)",}}>
+                      SPD
+                    </Typography>
+                    <Typography sx={{fontWeight: "bold", textShadow: "1px 1px 2px rgba(0,0,0,0.6)",}}>
+                      {card.spd}
+                    </Typography>
+                  </Stack>
+                  <Stack sx={{
+                    flex: 1,
+                    /* background: '#581c87', */
+                    background: '#14532d',                    
+                    textAlign: "center",
+                    color: "white",
+                    justifyContent: "center", 
+                    }}>
+                    <Typography sx={{textShadow: "1px 1px 2px rgba(0,0,0,0.6)",}}>
+                      WIS
+                    </Typography>
+                    <Typography sx={{fontWeight: "bold", textShadow: "1px 1px 2px rgba(0,0,0,0.6)",}}>
+                      {card.wis}
+                    </Typography>
+                  </Stack>
                 </Stack>
-                <Stack sx={{
-                  flex: 1,
-                  // border: 3,
-                  borderColor: "rgba(255,255,255,0.25)",
-                  background: '#1e3a8a',
-                  textAlign: "center",
-                  color: "white",
-                  }}>
-                  <Typography>
-                    DEF
-                  </Typography>
-                  <Typography sx={{fontWeight: "bold"}}>
-                    {card.def}
-                  </Typography>
-                </Stack>
-                <Stack sx={{
-                  flex: 1,                  
-                  // border: 3,
-                  borderColor: "rgba(255,255,255,0.25)",
-                  background: '#14532d',
-                  textAlign: "center",
-                  color: "white"
-                  }}>
-                  <Typography>
-                    SPD
-                  </Typography>
-                  <Typography sx={{fontWeight: "bold"}}>
-                    {card.spd}
-                  </Typography>
-                </Stack>
-                <Stack sx={{
-                  flex: 1,
-                  // border: 3,
-                  borderColor: "rgba(255,255,255,0.25)",
-                  background: '#581c87',
-                  textAlign: "center",
-                  color: "white"
-                  }}>
-                  <Typography>
-                    WIS
-                  </Typography>
-                  <Typography sx={{fontWeight: "bold"}}>
-                    {card.wis}
-                  </Typography>
-                </Stack>
-              </Stack>
+              </Box>
             </Stack>
           </CardContent>
       </Card>
   );
 }
+
