@@ -1,26 +1,27 @@
 "use client"
 
-const cards = [
-    { name: "...", type: "...", description: "...", 
-  imageUrl: "/cards/....png", 
-  atk: 0, def: 0, spd: 0, wis: 0 },
-    { name: "...", type: "...", description: "...", 
-  imageUrl: "/cards/....png", 
-  atk: 0, def: 0, spd: 0, wis: 0 }
-];
-
-const card = { name: "SampleName", type: "...", description: "...", 
-  imageUrl: "https://www.masmusculo.com/100941-thickbox_default/monster-energy.jpg", 
-  atk: 100, def: 100, spd: 100, wis: 100 }
-
 import { Box, Button, Container, Grid, Icon, Table, TableBody, TableContainer, TableHead, TextField, Drawer, Stack, FormControl, FormLabel, RadioGroup, FormHelperText, FormControlLabel, Radio, Checkbox, MenuItem, Select, InputLabel } from "@mui/material";
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CardDisplay from "./card";
+import { getSearchParams } from "../../services/search";
 
 import { useState } from "react";
+
+// const cards = [
+//     { name: "...", type: "...", description: "...", 
+//   imageUrl: "/cards/....png", 
+//   atk: 0, def: 0, spd: 0, wis: 0 },
+//     { name: "...", type: "...", description: "...", 
+//   imageUrl: "/cards/....png", 
+//   atk: 0, def: 0, spd: 0, wis: 0 }
+// ];
+
+// const card = { name: "SampleName", type: "...", description: "...", 
+//   imageUrl: "https://www.masmusculo.com/100941-thickbox_default/monster-energy.jpg", 
+//   atk: 100, def: 100, spd: 100, wis: 100 }
 
 export default function SearchPage()
 {
@@ -29,6 +30,8 @@ export default function SearchPage()
     const toggleDrawer = (open) => () => {
         setIsDrawerOpen(open);
     };
+
+    
 
     return(
         <Container maxWidth="xl" sx={{p: 0}}>
@@ -77,101 +80,33 @@ export default function SearchPage()
                     </Stack>
                 </Drawer>
             </Box>
-            <Grid container spacing={0.5}  sx={{
-                p: 0,
-                justifyContent: "center",
-            }}>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-                <Grid>
-                    <CardDisplay/>
-                </Grid>
-           </Grid>
+            <Grid container spacing={0.5}  sx={{ p: 0, justifyContent: "center",}}>
+                {cards.map((cardDB) => (
+                    <Grid key={card.name}>
+                        <CardDisplay
+                            name={cardDB.name}
+                            rarity={cardDB.rarity}
+                            atk={cardDB.atk}
+                            def={cardDB.def}
+                            spd={cardDB.spd}
+                            wis={cardDB.wis}
+                            imageUrl={cardDB.imageUrl}
+                        />
+                    </Grid>
+                ))}
+            </Grid>
         </Container>
     );
 }
+
+
+// // const cards = [
+// //     { name: "...", type: "...", description: "...", 
+// //   imageUrl: "/cards/....png", 
+// //   atk: 0, def: 0, spd: 0, wis: 0 },
+// //     { name: "...", type: "...", description: "...", 
+// //   imageUrl: "/cards/....png", 
+// //   atk: 0, def: 0, spd: 0, wis: 0 }
+// // ];
+
+

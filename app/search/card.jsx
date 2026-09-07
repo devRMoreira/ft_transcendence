@@ -2,9 +2,17 @@
 
 import { Box, Button, ButtonGroup, Card, CardActions, CardContent, CardMedia, Container, Grid, Stack, Typography } from "@mui/material";
 
-const card = { name: "Kao", type: "rare", description: "...", 
-  imageUrl: "https://www.renshuu.org/i/img/landing_v2/landing_kao.png", 
-  atk: 100, def: 100, spd: 100, wis: 100 }
+// const card = { name: "Kao", type: "rare", description: "...", 
+//   imageUrl: "https://www.renshuu.org/i/img/landing_v2/landing_kao.png", 
+//   atk: 100, def: 100, spd: 100, wis: 100 }
+
+let name = 'Amethyst 7'
+let imageUrl = "https://www.renshuu.org/i/img/landing_v2/landing_kao.png"
+let rarity = 'Amethyst'
+let atk = 12
+let def = 24
+let spd = 3
+let wis = 15
 
 export default function CardDisplay()
 {
@@ -39,7 +47,7 @@ export default function CardDisplay()
                   fontWeight: "bold",
                   py: 0.3
                   }}> {/* CARD NAME */}
-                  {card.name}
+                  {name}
                 </Typography>
               </Box>
               <Box sx={{ flex: 1, display: "flex", alignItems: "stretch"}}>
@@ -55,7 +63,7 @@ export default function CardDisplay()
                       ATK
                     </Typography>
                     <Typography sx={{fontWeight: "bold", textShadow: "1px 1px 2px rgba(0,0,0,0.6)",}}>
-                      {card.atk}
+                      {atk}
                     </Typography>
                   </Stack>
                   <Stack sx={{
@@ -69,7 +77,7 @@ export default function CardDisplay()
                       DEF
                     </Typography>
                     <Typography sx={{fontWeight: "bold", textShadow: "1px 1px 2px rgba(0,0,0,0.6)",}}>
-                      {card.def}
+                      {def}
                     </Typography>
                   </Stack>
                   <Stack sx={{
@@ -83,7 +91,7 @@ export default function CardDisplay()
                       SPD
                     </Typography>
                     <Typography sx={{fontWeight: "bold", textShadow: "1px 1px 2px rgba(0,0,0,0.6)",}}>
-                      {card.spd}
+                      {spd}
                     </Typography>
                   </Stack>
                   <Stack sx={{
@@ -98,7 +106,7 @@ export default function CardDisplay()
                       WIS
                     </Typography>
                     <Typography sx={{fontWeight: "bold", textShadow: "1px 1px 2px rgba(0,0,0,0.6)",}}>
-                      {card.wis}
+                      {wis}
                     </Typography>
                   </Stack>
                 </Stack>
