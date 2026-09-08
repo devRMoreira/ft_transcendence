@@ -1,12 +1,13 @@
-// export async function getCards()
-// {
-// 	const cards = await prisma.card.findMany();
+export async function getCards()
+{
+	const res = await fetch("/api/search", { method: "GET" })
+	///api/search?${params.toString()}
 
+	if (!res.ok)
+    {
+        //err
+    }
 
-// 	const res = await fetch("/api/search?", { method: "GET" })
-// 	///api/search?${params.toString()}
-
-// 	// if (!res)
-
-// 	const data = await res.json()
-// }
+	const data = await res.json()
+    return data.cards
+}

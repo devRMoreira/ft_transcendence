@@ -7,8 +7,9 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CardDisplay from "./card";
 import { getSearchParams } from "../../services/search";
+import { getCards } from "../../services/cards";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // const cards = [
 //     { name: "...", type: "...", description: "...", 
@@ -25,13 +26,25 @@ import { useState } from "react";
 
 export default function SearchPage()
 {
+    //loading card data
+    const [cards, setCards] = useState([])
     //toggles drawer on click
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+    useEffect(() => {
+        async function loadCards()
+        {
+            //try
+            const cardData = await getCards()
+            setCards(cardData)
+            //catch
+        }
+        loadCards()
+    }, [])
+
     const toggleDrawer = (open) => () => {
         setIsDrawerOpen(open);
     };
-
-    
 
     return(
         <Container maxWidth="xl" sx={{p: 0}}>
@@ -50,7 +63,7 @@ export default function SearchPage()
                     Filter
                 </Button>
                 <Drawer anchor="top" open={isDrawerOpen} onClose={toggleDrawer(false)} spacing={10}>
-                    <Stack spacing={1} sx={{p: 3,alignItems: "center"}}>
+                    <Stack spacing={1} sx={{p: 3, alignItems: "center"}}>
                         <FormControl placeholder="">
                             <FormLabel sx={{py: 1}}>Filter by Rarity</FormLabel>
                                 <FormControlLabel label="Common" control={<Checkbox value="common" checked={true} /*onChange={}*/ color="primary"/> }/>
@@ -81,16 +94,16 @@ export default function SearchPage()
                 </Drawer>
             </Box>
             <Grid container spacing={0.5}  sx={{ p: 0, justifyContent: "center",}}>
-                {cards.map((cardDB) => (
-                    <Grid key={card.name}>
+                {cards.map((card) => (
+                    <Grid key={card.id}>
                         <CardDisplay
-                            name={cardDB.name}
-                            rarity={cardDB.rarity}
-                            atk={cardDB.atk}
-                            def={cardDB.def}
-                            spd={cardDB.spd}
-                            wis={cardDB.wis}
-                            imageUrl={cardDB.imageUrl}
+                            name={card.name}
+                            rarity={card.rarity}
+                            atk={card.atk}
+                            def={card.def}
+                            spd={card.spd}
+                            wis={card.wis}
+                            imageUrl={card.imageUrl}
                         />
                     </Grid>
                 ))}
@@ -98,15 +111,3 @@ export default function SearchPage()
         </Container>
     );
 }
-
-
-// // const cards = [
-// //     { name: "...", type: "...", description: "...", 
-// //   imageUrl: "/cards/....png", 
-// //   atk: 0, def: 0, spd: 0, wis: 0 },
-// //     { name: "...", type: "...", description: "...", 
-// //   imageUrl: "/cards/....png", 
-// //   atk: 0, def: 0, spd: 0, wis: 0 }
-// // ];
-
-

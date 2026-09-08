@@ -14,10 +14,12 @@ import { prisma } from "@/lib/prisma"
 //   spd          Int
 //   wis	       Int
 
-export async function GET(request)
+export async function GET()
 {
+    //try
     const cards = await prisma.card.findMany()
-
     return Response.json({ cards });
+    //catch
 }
 
+ 
