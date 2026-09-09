@@ -5,6 +5,7 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import CheckIcon from '@mui/icons-material/Check';
 import CardDisplay from "./card";
 import { getSearchParams } from "../../services/search";
 import { getCards } from "../../services/cards";
@@ -24,23 +25,43 @@ import { useEffect, useState } from "react";
 //   imageUrl: "https://www.masmusculo.com/100941-thickbox_default/monster-energy.jpg", 
 //   atk: 100, def: 100, spd: 100, wis: 100 }
 
+const RARITY_OPTIONS = ["amethyst", "platinum", "gold", "silver"]
+
 export default function SearchPage()
 {
     //loading card data
     const [cards, setCards] = useState([])
     //toggles drawer on click
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+    const [formState, setFormState] = useState({
+        rarities: [],
+        sortBy: "id",
+    })
+    const [appliedParams, setAppliedParams] = useState([formState])
+
+    const handleRarityChange = (event) => {
+        const { target: { value } } = event;
+        setFormState((prev) => ({
+            ...prev,
+            rarities: typeof value === "string" ? value.split(",") : value,
+        }));
+    };
+
+    const handleApplyFilters = (e) => {
+        if (e) e.preventDefault();
+        setAppliedFilters(formState);
+    };
 
     useEffect(() => {
         async function loadCards()
         {
             //try
-            const cardData = await getCards()
+            const cardData = await getCards(appliedParams)
             setCards(cardData)
             //catch
         }
         loadCards()
-    }, [])
+    }, [appliedParams])
 
     const toggleDrawer = (open) => () => {
         setIsDrawerOpen(open);
@@ -55,20 +76,22 @@ export default function SearchPage()
                 height: "clamp(10px, 10dvh)",
                 width: "100%"
             }}>
-                <Button variant="text" color="primary" startIcon={<SearchRoundedIcon/>}>
-                    Search
-                </Button>
-                <TextField placeholder="Enter card name" sx={{}}/>
                 <Button variant="text" color="secondary" startIcon={<KeyboardDoubleArrowDownIcon/>} onClick={toggleDrawer(true)}>
                     Filter
                 </Button>
+                                <TextField placeholder="Enter card name" sx={{}}/>
+                <Button variant="text" color="primary" startIcon={<SearchRoundedIcon/>}>
+                    Search
+                </Button>
+
                 <Drawer anchor="top" open={isDrawerOpen} onClose={toggleDrawer(false)} spacing={10}>
-                    <Stack spacing={1} sx={{p: 3, alignItems: "center"}}>
+                    <Stack spacing={1} sx={{p: 3, alignItems: "center",}}>
                         <FormControl placeholder="">
-                            <FormLabel sx={{py: 1}}>Filter by Rarity</FormLabel>
-                                <FormControlLabel label="Common" control={<Checkbox value="common" checked={true} /*onChange={}*/ color="primary"/> }/>
-                                <FormControlLabel label="Uncommon" control={<Checkbox value="uncommon" checked={true} /*onChange={}*/ color="primary"/> }/>
-                                <FormControlLabel label="Rare" control={<Checkbox value="rare" checked={true}  /*onChange={}*/ color="primary"/> }/>
+                            <FormLabel sx={{py: 1, alignText: "center"}}>Filter by Rarity</FormLabel>
+                                <FormControlLabel label="Silver" control={<Checkbox value="silver" checked={true} /*onChange={}*/ color="primary"/> }/>
+                                <FormControlLabel label="Gold" control={<Checkbox value="gold" checked={true} /*onChange={}*/ color="primary"/> }/>
+                                <FormControlLabel label="Platinum" control={<Checkbox value="platinum" checked={true}  /*onChange={}*/ color="primary"/> }/>
+                                <FormControlLabel label="Amethyst" control={<Checkbox value="amethyst" checked={true}  /*onChange={}*/ color="primary"/> }/>
                             <FormHelperText></FormHelperText>
                         </FormControl>
                         <FormControl sx={{py: 0.8, width: "clamp(150px, 10dvw, 170px)"}}>
@@ -90,6 +113,9 @@ export default function SearchPage()
                                 <MenuItem /* value={ascRar} */><ArrowDropDownIcon/> Rarity</MenuItem>
                             </Select>
                         </FormControl>
+                        <Button variant="text" color="secondary" startIcon={<CheckIcon/>} sx={{width: "clamp(150px, 10dvw, 170px)"}}>
+                            Apply
+                        </Button>
                     </Stack>
                 </Drawer>
             </Box>
