@@ -11,8 +11,8 @@ import { prisma } from "@/lib/prisma"
 //   spd          Int
 //   wis	       Int
 
-const ALLOWED_SORT_FIELDS = ["id", "name", "rarity", "atk", "def", "spd", "wis"]
-const ALLOWED_SORT_DIRS = ["asc", "desc"]
+const ALLOWED_SORT_FIELDS = ["id_asc", "id_desc", "name_asc", "name_desc", "rarity_asc", "rarity_desc",
+    "atk_asc", "atk_desc", "def_asc", "def_desc", "spd_asc", "spd_desc", "wis_asc", "wis_desc"]
 const ALLOWED_RARITIES = ["amethyst", "platinum", "gold", "silver"]
 
 export async function GET(request)
@@ -21,19 +21,19 @@ export async function GET(request)
     const { searchParams } = new URL(request.URL)
 
     const testSortBy = searchParams.get("sortBy")
-    const testOrder = searchParams.get("order")
     const testRarity = searchParams.get("rarity")
     
-    const sortBy = ALLOWED_SORT_FIELDS.includes(testSortBy) ? testSortBy : "id"
-    const order = ALLOWED_SORT_DIRS.includes(testOrder) ? testOrder : "asc"
-    const rarity = ALLOWED_RARITIES.includes(testRarity)
+    const sortBy = ALLOWED_SORT_FIELDS.includes(testSortBy) ? testSortBy : "name_asc"  
+    const rarity = ALLOWED_RARITIES.includes(testRarity) ? testRarity : ["amethyst", "platinum", "gold", "silver"]
+
+    const sortParam = sortBy.split('_') // 'name_asc' to 'name' 'asc' 
 
     const cards = await prisma.card.findMany({
         where: {
-            
+            rarity
         },
         orderBy: {
-            [sortBy]: order,
+            [sortParam[0]]: sortParam[1],
         },
     })
 

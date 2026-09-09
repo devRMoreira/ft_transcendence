@@ -8,7 +8,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CheckIcon from '@mui/icons-material/Check';
 import CardDisplay from "./card";
 import { getSearchParams } from "../../services/search";
-import { getCards } from "../../services/cards";
+// import { getCards } from "../../services/cards";
 
 import { useEffect, useState } from "react";
 
@@ -34,22 +34,38 @@ export default function SearchPage()
     //toggles drawer on click
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const [formState, setFormState] = useState({
-        rarities: [],
-        sortBy: "id",
+        searchQuery: "",
+        rarities: ["amethyst", "platinum", "gold", "silver"],
+        sortBy: "name_asc",
     })
     const [appliedParams, setAppliedParams] = useState([formState])
 
     const handleRarityChange = (event) => {
-        const { target: { value } } = event;
+        const { value, checked } = event.target;
         setFormState((prev) => ({
             ...prev,
-            rarities: typeof value === "string" ? value.split(",") : value,
+            rarities: checked ? [...prev.rarities, value] : prev.rarities.filter((r) => r !== value),
         }));
     };
 
-    const handleApplyFilters = (e) => {
+    const handleSortChange = (event) => {
+        setFormState((prev) => ({
+            ...prev,
+            sortBy: event.target.value,
+        }));
+    };
+
+    const handleSearchChange = (event) => {
+        setFormState((prev) => ({
+            ...prev,
+            searchQuery: event.target.value,
+        }));
+    };
+
+    const handleApplyParams = (e) => {
         if (e) e.preventDefault();
-        setAppliedFilters(formState);
+        setAppliedParams(formState);
+        setIsDrawerOpen(false);
     };
 
     useEffect(() => {
@@ -79,41 +95,51 @@ export default function SearchPage()
                 <Button variant="text" color="secondary" startIcon={<KeyboardDoubleArrowDownIcon/>} onClick={toggleDrawer(true)}>
                     Filter
                 </Button>
-                                <TextField placeholder="Enter card name" sx={{}}/>
-                <Button variant="text" color="primary" startIcon={<SearchRoundedIcon/>}>
+                <TextField onChange={handleSearchChange} value={formState.searchQuery} placeholder="Enter card name" sx={{}}/>
+                <Button variant="text" color="primary" startIcon={<SearchRoundedIcon/>} onClick={handleApplyParams}>
                     Search
                 </Button>
 
                 <Drawer anchor="top" open={isDrawerOpen} onClose={toggleDrawer(false)} spacing={10}>
                     <Stack spacing={1} sx={{p: 3, alignItems: "center",}}>
-                        <FormControl placeholder="">
+                        <FormControl component="fieldset">
                             <FormLabel sx={{py: 1, alignText: "center"}}>Filter by Rarity</FormLabel>
-                                <FormControlLabel label="Silver" control={<Checkbox value="silver" checked={true} /*onChange={}*/ color="primary"/> }/>
-                                <FormControlLabel label="Gold" control={<Checkbox value="gold" checked={true} /*onChange={}*/ color="primary"/> }/>
-                                <FormControlLabel label="Platinum" control={<Checkbox value="platinum" checked={true}  /*onChange={}*/ color="primary"/> }/>
-                                <FormControlLabel label="Amethyst" control={<Checkbox value="amethyst" checked={true}  /*onChange={}*/ color="primary"/> }/>
+                                {RARITY_OPTIONS.map((rarity) => (
+                                <FormControlLabel 
+                                    key={rarity}
+                                    label={rarity.charAt(0).toUpperCase() + rarity.slice(1)} 
+                                    control={
+                                        <Checkbox 
+                                            value={rarity} 
+                                            checked={formState.rarities.includes(rarity)} 
+                                            onChange={handleRarityChange} 
+                                            color="primary"
+                                        /> 
+                                    }
+                                />
+                                ))}
                             <FormHelperText></FormHelperText>
                         </FormControl>
                         <FormControl sx={{py: 0.8, width: "clamp(150px, 10dvw, 170px)"}}>
                             <InputLabel>Order by Stats</InputLabel>
-                              <Select label="Order by Stats">
-                                <MenuItem /* value={ascAtk} */><ArrowDropDownIcon/> ATK</MenuItem>
-                                <MenuItem /* value={descAtk} */><ArrowDropUpIcon/> ATK</MenuItem>
+                              <Select label="Order by Stats" value={formState.sortBy} onChange={handleSortChange}>
+                                <MenuItem value={asc_atk}><ArrowDropDownIcon/> ATK</MenuItem>
+                                <MenuItem value={desc_atk}><ArrowDropUpIcon/> ATK</MenuItem>
 
-                                <MenuItem /* value={descDef} */><ArrowDropUpIcon/> DEF</MenuItem>
-                                <MenuItem /* value={ascDef} */><ArrowDropDownIcon/> DEF</MenuItem>
+                                <MenuItem value={desc_def}><ArrowDropUpIcon/> DEF</MenuItem>
+                                <MenuItem value={asc_def}><ArrowDropDownIcon/> DEF</MenuItem>
 
-                                <MenuItem /* value={descSpd} */><ArrowDropUpIcon/> SPD</MenuItem>
-                                <MenuItem /* value={ascSpd} */><ArrowDropDownIcon/> SPD</MenuItem>
+                                <MenuItem value={desc_spd}><ArrowDropUpIcon/> SPD</MenuItem>
+                                <MenuItem value={asc_spd}><ArrowDropDownIcon/> SPD</MenuItem>
 
-                                <MenuItem /* value={descWis} */><ArrowDropUpIcon/> WIS</MenuItem>
-                                <MenuItem /* value={ascWis} */><ArrowDropDownIcon/> WIS</MenuItem>
-                                
-                                <MenuItem /* value={descRar} */><ArrowDropUpIcon/> Rarity</MenuItem>
-                                <MenuItem /* value={ascRar} */><ArrowDropDownIcon/> Rarity</MenuItem>
+                                <MenuItem value={desc_wis}><ArrowDropUpIcon/> WIS</MenuItem>
+                                <MenuItem value={asc_wis}><ArrowDropDownIcon/> WIS</MenuItem>
+                                                              
+                                <MenuItem value={desc_rar}><ArrowDropUpIcon/> Rarity</MenuItem>
+                                <MenuItem value={asc_rar}><ArrowDropDownIcon/> Rarity</MenuItem>
                             </Select>
                         </FormControl>
-                        <Button variant="text" color="secondary" startIcon={<CheckIcon/>} sx={{width: "clamp(150px, 10dvw, 170px)"}}>
+                        <Button onClick={handleApplyParams} variant="text" color="secondary" startIcon={<CheckIcon/>} sx={{width: "clamp(150px, 10dvw, 170px)"}}>
                             Apply
                         </Button>
                     </Stack>
@@ -137,3 +163,8 @@ export default function SearchPage()
         </Container>
     );
 }
+
+                                // <FormControlLabel label="Silver" control={<Checkbox value="silver" checked={true} /*onChange={}*/ color="primary"/> }/>
+                                // <FormControlLabel label="Gold" control={<Checkbox value="gold" checked={true} /*onChange={}*/ color="primary"/> }/>
+                                // <FormControlLabel label="Platinum" control={<Checkbox value="platinum" checked={true}  /*onChange={}*/ color="primary"/> }/>
+                                // <FormControlLabel label="Amethyst" control={<Checkbox value="amethyst" checked={true}  /*onChange={}*/ color="primary"/> }/>
