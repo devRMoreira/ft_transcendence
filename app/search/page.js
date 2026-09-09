@@ -7,25 +7,11 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CheckIcon from '@mui/icons-material/Check';
 import CardDisplay from "./card";
-import { getSearchParams } from "../../services/search";
+import { cardSearchParams } from "../../services/search";
 // import { getCards } from "../../services/cards";
-
 import { useEffect, useState } from "react";
 
-// const cards = [
-//     { name: "...", type: "...", description: "...", 
-//   imageUrl: "/cards/....png", 
-//   atk: 0, def: 0, spd: 0, wis: 0 },
-//     { name: "...", type: "...", description: "...", 
-//   imageUrl: "/cards/....png", 
-//   atk: 0, def: 0, spd: 0, wis: 0 }
-// ];
-
-// const card = { name: "SampleName", type: "...", description: "...", 
-//   imageUrl: "https://www.masmusculo.com/100941-thickbox_default/monster-energy.jpg", 
-//   atk: 100, def: 100, spd: 100, wis: 100 }
-
-const RARITY_OPTIONS = ["amethyst", "platinum", "gold", "silver"]
+const RARITY_OPTIONS = ["Amethyst", "Platinum", "Gold", "Silver"]
 
 export default function SearchPage()
 {
@@ -35,16 +21,16 @@ export default function SearchPage()
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const [formState, setFormState] = useState({
         searchQuery: "",
-        rarities: ["amethyst", "platinum", "gold", "silver"],
+        rarity: ["Amethyst", "Platinum", "Gold", "Silver"],
         sortBy: "name_asc",
     })
-    const [appliedParams, setAppliedParams] = useState([formState])
+    const [appliedParams, setAppliedParams] = useState(formState)
 
     const handleRarityChange = (event) => {
         const { value, checked } = event.target;
         setFormState((prev) => ({
             ...prev,
-            rarities: checked ? [...prev.rarities, value] : prev.rarities.filter((r) => r !== value),
+            rarity: checked ? [...prev.rarity, value] : prev.rarity.filter((r) => r !== value),
         }));
     };
 
@@ -72,7 +58,7 @@ export default function SearchPage()
         async function loadCards()
         {
             //try
-            const cardData = await getCards(appliedParams)
+            const cardData = await cardSearchParams(appliedParams)
             setCards(cardData)
             //catch
         }
@@ -104,14 +90,14 @@ export default function SearchPage()
                     <Stack spacing={1} sx={{p: 3, alignItems: "center",}}>
                         <FormControl component="fieldset">
                             <FormLabel sx={{py: 1, alignText: "center"}}>Filter by Rarity</FormLabel>
-                                {RARITY_OPTIONS.map((rarity) => (
+                                {RARITY_OPTIONS.map((rar) => (
                                 <FormControlLabel 
-                                    key={rarity}
-                                    label={rarity.charAt(0).toUpperCase() + rarity.slice(1)} 
+                                    key={rar}
+                                    label={rar} 
                                     control={
                                         <Checkbox 
-                                            value={rarity} 
-                                            checked={formState.rarities.includes(rarity)} 
+                                            value={rar} 
+                                            checked={formState.rarity.includes(rar)} 
                                             onChange={handleRarityChange} 
                                             color="primary"
                                         /> 
@@ -123,20 +109,23 @@ export default function SearchPage()
                         <FormControl sx={{py: 0.8, width: "clamp(150px, 10dvw, 170px)"}}>
                             <InputLabel>Order by Stats</InputLabel>
                               <Select label="Order by Stats" value={formState.sortBy} onChange={handleSortChange}>
-                                <MenuItem value={asc_atk}><ArrowDropDownIcon/> ATK</MenuItem>
-                                <MenuItem value={desc_atk}><ArrowDropUpIcon/> ATK</MenuItem>
+                                <MenuItem value="name_asc"><ArrowDropDownIcon/> Name </MenuItem>
+                                <MenuItem value="name_desc"><ArrowDropUpIcon/> Name </MenuItem>
 
-                                <MenuItem value={desc_def}><ArrowDropUpIcon/> DEF</MenuItem>
-                                <MenuItem value={asc_def}><ArrowDropDownIcon/> DEF</MenuItem>
+                                <MenuItem value="atk_asc"><ArrowDropDownIcon/> ATK </MenuItem>
+                                <MenuItem value="atk_desc"><ArrowDropUpIcon/> ATK </MenuItem>
 
-                                <MenuItem value={desc_spd}><ArrowDropUpIcon/> SPD</MenuItem>
-                                <MenuItem value={asc_spd}><ArrowDropDownIcon/> SPD</MenuItem>
+                                <MenuItem value="def_asc"><ArrowDropDownIcon/> DEF </MenuItem>
+                                <MenuItem value="def_desc"><ArrowDropUpIcon/> DEF </MenuItem>
 
-                                <MenuItem value={desc_wis}><ArrowDropUpIcon/> WIS</MenuItem>
-                                <MenuItem value={asc_wis}><ArrowDropDownIcon/> WIS</MenuItem>
-                                                              
-                                <MenuItem value={desc_rar}><ArrowDropUpIcon/> Rarity</MenuItem>
-                                <MenuItem value={asc_rar}><ArrowDropDownIcon/> Rarity</MenuItem>
+                                <MenuItem value="spd_asc"><ArrowDropDownIcon/> SPD </MenuItem>
+                                <MenuItem value="spd_desc"><ArrowDropUpIcon/> SPD </MenuItem>
+
+                                <MenuItem value="wis_asc"><ArrowDropDownIcon/> WIS </MenuItem>
+                                <MenuItem value="wis_desc"><ArrowDropUpIcon/> WIS </MenuItem>
+
+                                <MenuItem value="rarity_asc"><ArrowDropDownIcon/> Rarity </MenuItem>
+                                <MenuItem value="rarity_desc"><ArrowDropUpIcon/> Rarity </MenuItem>
                             </Select>
                         </FormControl>
                         <Button onClick={handleApplyParams} variant="text" color="secondary" startIcon={<CheckIcon/>} sx={{width: "clamp(150px, 10dvw, 170px)"}}>
