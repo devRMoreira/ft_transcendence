@@ -53,7 +53,6 @@ export async function GET(request)
             },
         })
 
-        // const cards = await prisma.card.findMany()
         return Response.json({ cards });
     }
     catch {

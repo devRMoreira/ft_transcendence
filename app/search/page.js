@@ -8,7 +8,6 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CheckIcon from '@mui/icons-material/Check';
 import CardDisplay from "./card";
 import { cardSearchParams } from "../../services/search";
-// import { getCards } from "../../services/cards";
 import { useEffect, useState } from "react";
 
 const RARITY_OPTIONS = ["Amethyst", "Platinum", "Gold", "Silver"]
@@ -152,8 +151,3 @@ export default function SearchPage()
         </Container>
     );
 }
-
-                                // <FormControlLabel label="Silver" control={<Checkbox value="silver" checked={true} /*onChange={}*/ color="primary"/> }/>
-                                // <FormControlLabel label="Gold" control={<Checkbox value="gold" checked={true} /*onChange={}*/ color="primary"/> }/>
-                                // <FormControlLabel label="Platinum" control={<Checkbox value="platinum" checked={true}  /*onChange={}*/ color="primary"/> }/>
-                                // <FormControlLabel label="Amethyst" control={<Checkbox value="amethyst" checked={true}  /*onChange={}*/ color="primary"/> }/>
