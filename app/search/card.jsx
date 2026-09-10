@@ -2,23 +2,51 @@
 
 import { Box, Button, ButtonGroup, Card, CardActions, CardContent, CardMedia, Container, Grid, Stack, Typography } from "@mui/material";
 
-const card = { name: "Kao", type: "rare", description: "...", 
-  imageUrl: "https://www.renshuu.org/i/img/landing_v2/landing_kao.png", 
-  atk: 100, def: 100, spd: 100, wis: 100 }
+const rarityColor = {
+Amethyst: {
+    border: "#a855f7", 
+    banner: "#652690 ", 
+  },
+  Silver: {
+    border: "#6f7d86", 
+    banner: "#485a68", 
+  },
+  Gold: {
+    border: "#f3c040",
+    banner: "#DAA520", // "goldenrod"
+  },
+  Platinum: {
+    border: "#1894B5", 
+    banner: "#13667d", 
+  },
+  Default: {
+    border: "gray",
+    banner: "gray",
+  },
+}
 
-export default function CardDisplay()
+export default function CardDisplay({
+  name = "Kao",
+  imageUrl = "https://www.renshuu.org/i/img/landing_v2/landing_kao.png",
+  rarity = "Default",
+  atk = 0,
+  def = 0,
+  spd = 0,
+  wis = 0}) 
 {
+  const cardRarity = rarityColor[rarity] /* || rarityColor.Default */
+
   return (
       <Card elevation={5} sx={{
         aspectRatio: 5/7,
         width: 'clamp(85px, 8dvw, 95px)',
         border: 2,
-        borderColor: "goldenrod",
+        borderColor: cardRarity.border,
         background: "gray",
         display: "flex",
         flexDirection: "column",
         }}>
-        <CardMedia component="img" image={card.imageUrl} sx={{
+        <CardMedia component="img" image={"https://www.renshuu.org/i/img/landing_v2/landing_kao.png"} sx={{ // path does not work dynamically
           flex: "0 0 56%", //rougly same as aspectRatio: 5/4,
           }}/>
           <CardContent sx={{
@@ -30,7 +58,7 @@ export default function CardDisplay()
             minHeight: 0,
             }}>
             <Stack sx={{ flex: 1, minHeight: 0,}}>
-              <Box sx={{background: "goldenrod", justifyContent: "center", }}>
+              <Box sx={{background: cardRarity.banner, justifyContent: "center", }}>
                 <Typography sx={{
                   textShadow: "1px 1px 2px rgba(0,0,0,0.6)",
                   lineHeight: 1.2,
@@ -39,7 +67,7 @@ export default function CardDisplay()
                   fontWeight: "bold",
                   py: 0.3
                   }}> {/* CARD NAME */}
-                  {card.name}
+                  {name}
                 </Typography>
               </Box>
               <Box sx={{ flex: 1, display: "flex", alignItems: "stretch"}}>
@@ -55,7 +83,7 @@ export default function CardDisplay()
                       ATK
                     </Typography>
                     <Typography sx={{fontWeight: "bold", textShadow: "1px 1px 2px rgba(0,0,0,0.6)",}}>
-                      {card.atk}
+                      {atk}
                     </Typography>
                   </Stack>
                   <Stack sx={{
@@ -69,7 +97,7 @@ export default function CardDisplay()
                       DEF
                     </Typography>
                     <Typography sx={{fontWeight: "bold", textShadow: "1px 1px 2px rgba(0,0,0,0.6)",}}>
-                      {card.def}
+                      {def}
                     </Typography>
                   </Stack>
                   <Stack sx={{
@@ -83,7 +111,7 @@ export default function CardDisplay()
                       SPD
                     </Typography>
                     <Typography sx={{fontWeight: "bold", textShadow: "1px 1px 2px rgba(0,0,0,0.6)",}}>
-                      {card.spd}
+                      {spd}
                     </Typography>
                   </Stack>
                   <Stack sx={{
@@ -98,7 +126,7 @@ export default function CardDisplay()
                       WIS
                     </Typography>
                     <Typography sx={{fontWeight: "bold", textShadow: "1px 1px 2px rgba(0,0,0,0.6)",}}>
-                      {card.wis}
+                      {wis}
                     </Typography>
                   </Stack>
                 </Stack>
