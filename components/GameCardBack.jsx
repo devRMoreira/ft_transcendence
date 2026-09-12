@@ -2,7 +2,7 @@
 
 import { Card, Typography } from "@mui/material"
 
-export default function CardBack({ onClick, disabled, label }) {
+export default function GameCardBack({ onClick, disabled, label }) {
 	const clickable = Boolean(onClick) && !disabled
 
 	return (

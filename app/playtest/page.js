@@ -3,7 +3,10 @@
 import { useState } from "react"
 import { Box, Tabs, Tab, Typography } from "@mui/material"
 import { fakeStates } from "./fakeStates"
-import { ChoosingPhase, DraftingPhase, PlayingPhase, CompletePhase } from "./PhaseComponents"
+import { GameChoosingPhase } from "@/components/GameChoosingPhase"
+import { GameDraftingPhase } from "@/components/GameDraftingPhase"
+import { GamePlayingPhase } from "@/components/GamePlayingPhase"
+import { GameCompletePhase } from "@/components/GameCompletePhase"
 
 const choicePrint =
 	(label) =>
@@ -36,19 +39,19 @@ export default function MatchPreviewPage() {
 
 			<Box sx={{ border: "1px dashed", borderColor: "divider", p: 3, borderRadius: 1 }}>
 				{match.status === "CHOOSING" && (
-					<ChoosingPhase
+					<GameChoosingPhase
 						match={match}
 						you={match.you}
 						onChoose={choicePrint("onChoose")}
 					/>
 				)}
 				{match.status === "DRAFTING" && (
-					<DraftingPhase match={match} you={match.you} onPick={choicePrint("onPick")} />
+					<GameDraftingPhase match={match} you={match.you} onPick={choicePrint("onPick")} />
 				)}
 				{match.status === "PLAYING" && (
-					<PlayingPhase match={match} you={match.you} onPlay={choicePrint("onPlay")} />
+					<GamePlayingPhase match={match} you={match.you} onPlay={choicePrint("onPlay")} />
 				)}
-				{match.status === "COMPLETE" && <CompletePhase match={match} you={match.you} />}
+				{match.status === "COMPLETE" && <GameCompletePhase match={match} you={match.you} />}
 			</Box>
 		</Box>
 	)
