@@ -4,9 +4,10 @@ import LoadingButton from "@/components/LoadingButton"
 import { Alert, Box, Container, FormControl, FormLabel, Link, Paper, Stack, TextField, Typography } from "@mui/material"
 import { useState } from "react"
 import NextLink from "next/link";
-import { signupSubmit } from "../../services/signup";
+
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { signupSubmit } from "@/services/api";
 
 const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
@@ -59,7 +60,7 @@ export default function SignupPage()
 		return isValid
 	}
 
-	async function handleSubmit(e)
+	const handleSubmit = async (e) =>
 	{
 		e.preventDefault()
 
@@ -77,30 +78,31 @@ export default function SignupPage()
 
 		setLoading(true)
 
-		const res = await signupSubmit(data)
+		try
+		{
+			await signupSubmit(data)
 
-		if(!res.ok)
+			const email = data.email
+			const password = data.password
+			const signStatus = await signIn("credentials", {email, password, redirect:false})
+
+			if(signStatus?.error)
+			{
+				router.push("/login")
+				return
+			}
+
+			router.push("/")
+			router.refresh()
+		}
+		catch(error)
+		{
+			addError("page", error.message)
+		}
+		finally
 		{
 			setLoading(false)
-			addError("page", res.error || "Something went wrong")
-			return
 		}
-
-		const email = data.email
-		const password = data.password
-
-		const signStatus = await signIn("credentials", {email, password, redirect:false})
-
-		setLoading(false)
-
-		if(signStatus?.error)
-		{
-			router.push("/login")
-			return
-		}
-
-		router.push("/")
-		router.refresh()
 	}
 
   return (

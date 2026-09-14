@@ -1,0 +1,14 @@
+.next
+build
+dist
+node_modules
+docker-compose.yaml
+jsconfig.json
+next.config.mjs
+package-lock.json
+package.json
+prisma.config/ts
+proxy.js
+pnpm-lock.yaml
+start.sh
+yarn.lock
