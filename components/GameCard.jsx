@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Button, ButtonGroup, Card, CardActions, CardContent, CardMedia, Container, Grid, Stack, Typography } from "@mui/material";
+import { Box, Card, CardContent, CardMedia, Stack, Typography } from "@mui/material";
 
 const rarityColor = {
 Amethyst: {

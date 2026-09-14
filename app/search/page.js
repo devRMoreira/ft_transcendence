@@ -1,12 +1,12 @@
 "use client"
 
-import { Box, Button, Container, Grid, Icon, Table, TableBody, TableContainer, TableHead, TextField, Drawer, Stack, FormControl, FormLabel, RadioGroup, FormHelperText, FormControlLabel, Radio, Checkbox, MenuItem, Select, InputLabel } from "@mui/material";
+import { Box, Button, Container, Grid, TextField, Drawer, Stack, FormControl, FormLabel, FormHelperText, FormControlLabel, Checkbox, MenuItem, Select, InputLabel } from "@mui/material";
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CheckIcon from '@mui/icons-material/Check';
-import CardDisplay from "./card";
+import CardDisplay from "../../components/GameCard";
 import { cardSearchParams } from "../../services/search";
 import { useEffect, useState } from "react";
 
@@ -18,6 +18,7 @@ export default function SearchPage()
     const [cards, setCards] = useState([])
     //toggles drawer on click
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+    //search/sort fields and their default values 
     const [formState, setFormState] = useState({
         searchQuery: "",
         rarity: ["Amethyst", "Platinum", "Gold", "Silver"],

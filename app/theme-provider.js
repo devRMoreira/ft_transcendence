@@ -26,7 +26,8 @@ const theme = createTheme({
     },
     "background": {
       "default": "#191e24",
-      "paper": "#1d232a"
+      "paper": "#1d232a",
+      "lighter": "#434953",
     },
     "divider": "rgba(21, 25, 30, 0.14)",
     "text": {
