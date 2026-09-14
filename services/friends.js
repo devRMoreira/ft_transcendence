@@ -4,6 +4,7 @@ export async function fetchFriendData(userId, reqType)
         return [];
 
     const res = await fetch(`/api/friends?userId=${userId}&type=${reqType}`, { method: "GET" })
+    
     if (!res.ok)
 	{
 		console.error(`friend data query failed with status: ${res.status}`)
@@ -43,30 +44,31 @@ export async function getFriendStatus(userId1, userId2)
     return json.data || []
 }
 
-export async function sendFriendReq(senderId, receiverId) 
+export async function sendFriendReq(requesterId, recipient) 
 {
     const res = await fetch("/api/friends", {
-        method: POST,
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ senderId, receiverId }),
+        body: JSON.stringify({ requesterId, recipient }),
     })
+
+    const json = await res.json()
 
     if (!res.ok)
 	{
-		console.error(`send friend req failed with status: ${res.status}`)
-        return []
+		console.error(`Send friend req failed: ${json.error || res.status}`)
+        return { error: json.error || "Failed to send request" }
 	}
 
-    const ret = await res.json()
-    return ret
+    return json
 }
 
-export async function acceptFriendReq(userId1, userId2) 
+export async function acceptFriendReq(requesterId, addresseeId) 
 {
     const res = await fetch("/api/friends", {
-        method: PATCH,
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ senderId, receiverId }),
+        body: JSON.stringify({ requesterId, addresseeId }),
     })
 
     if (!res.ok)
@@ -74,7 +76,6 @@ export async function acceptFriendReq(userId1, userId2)
 		console.error(`accept friend req failed with status: ${res.status}`)
         return []
 	}
-
-    const ret = await res.json()
-    return ret
+ 
+    return await res.json()
 }

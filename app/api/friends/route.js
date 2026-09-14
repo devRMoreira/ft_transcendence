@@ -3,15 +3,15 @@ import { prisma } from "@/lib/prisma"
 export async function GET(request)
 {
     try {
-        const { friendParams } = new URL(request.url)
-        const userId = friendParams.get("userId")
-        const type = friendParams.get("type") 
-        const targetId = friendParams.get("targetId") 
+        const { searchParams } = new URL(request.url)
+        const userId = searchParams.get("userId")
+        const type = searchParams.get("type") 
+        const targetId = searchParams.get("targetId") 
 
         if (!userId || !type)
             return Response.json( {error: "Missing info for GET"}, {status: 400} )
     
-        if (type = "accepted")
+        if (type == "accepted")
         {
             const friendship = await prisma.friendship.findMany({
                 where: {
@@ -33,7 +33,7 @@ export async function GET(request)
             return Response.json({ data: friends })
         }
 
-        else if (type = "sent")
+        else if (type == "sent")
         {
             const sent = await prisma.friendship.findMany({
                 where: {
@@ -48,7 +48,7 @@ export async function GET(request)
             return Response.json({ data: sent })
         }
 
-        else if (type = "received")
+        else if (type == "received")
         {
             const received = await prisma.friendship.findMany({
                 where: {
@@ -63,7 +63,7 @@ export async function GET(request)
             return Response.json({ data: received })
         }
 
-        else if (type = "status")
+        else if (type == "status")
         {
             const status = await prisma.friendship.findMany({
                 where: {
@@ -89,7 +89,26 @@ export async function GET(request)
 export async function POST(request) // SEND FRIEND REQUEST
 {
     try {
-        const { requesterId, addresseeId } = await request.json();
+        const { requesterId, recipient } = await request.json()
+
+        if (!requesterId || !recipient) {
+            return Response.json({ error: "Missing requesterId or recipient" }, { status: 400 })
+        }
+
+        const targetUser = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { email: recipient },
+                    { name: recipient },
+                ]
+            }
+        })
+
+        if (!targetUser) {
+            return Response.json({ error: "User not found" }, { status: 404 })
+        }
+
+        const addresseeId = targetUser.id
 
         // must not be same sender and receiver
         if (requesterId === addresseeId)
@@ -99,15 +118,16 @@ export async function POST(request) // SEND FRIEND REQUEST
         const existingRelation = await prisma.friendship.findFirst({
             where: {
                 OR: [
-                    { requesterId: userId, addresseeId: targetId },
-                    { requesterId: targetId, addresseeId: userId },   
+                    { requesterId: requesterId, addresseeId: addresseeId },
+                    { requesterId: addresseeId, addresseeId: requesterId },   
                 ],
             },
         })
 
         if(existingRelation)
         {
-            const errMsg = existingRelation.status === "ACCEPTED" ? "Already friends."
+            const errMsg = existingRelation.status === "ACCEPTED"
+                ? "Already friends."
                 : "Pending request already exists"
 
             return Response.json({ error: errMsg }, {status: 409}) // 409 Conflict

@@ -10,18 +10,51 @@ import StyleIcon from '@mui/icons-material/Style';
 import CheckIcon from '@mui/icons-material/Check';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import SendIcon from '@mui/icons-material/Send';
-// import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { getFriends, getPendingReqSent, getPendingReqReceived, getFriendStatus, sendFriendReq, acceptFriendReq } from "../../services/friends";
 import { useEffect, useState } from "react";
-import { ExpandMore } from '@mui/icons-material'
 
-export default function SearchPage()
+export default function friendsPage()
 {
+    // SAMPLE USER, TO REPLACE WITH SESSION.ID (dev2 ID)
+    const currentUserId = "cmth8mwi200019ow6ajutd2q7";
+
+    //for accordion tabs
     const [expanded, setExpanded] = useState(false);
+
+    const [friends, setFriends] =  useState([])
+    const [sentReqs, setSentReqs] =  useState([])
+    const [receivedReqs, setReceivedReqs] =  useState([])
+
+    const [addFriendInput, setAddFriendInput] = useState("")
 
     const handleAccordionToggle = (panel) => {
         setExpanded((prev) => (prev === panel ? false : panel))
     }
+
+    useEffect(() => {
+        if (!currentUserId) return
+
+        const loadData = async () => {
+            try {
+                const [friendsData, sentReqsData, receivedReqsData] = await Promise.all([
+                    getFriends(currentUserId),
+                    getPendingReqSent(currentUserId),
+                    getPendingReqReceived(currentUserId),
+                ])
+
+                setFriends(Array.isArray(friendsData) ? friendsData : [])
+                setSentReqs(Array.isArray(sentReqsData) ? sentReqsData : [])
+                setReceivedReqs(Array.isArray(receivedReqsData) ? receivedReqsData : [])
+            }
+            catch (error) {
+                console.error("Failed to load friends data:", error);
+            }
+        }
+
+        loadData()
+    }, [currentUserId])
+
+
 
     return(
         <Container maxWidth="sm">
@@ -88,7 +121,7 @@ export default function SearchPage()
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'space-between',
-                                    py: 1,
+                                    py: 1.4,
                                     px: 5,
                                     /*onSubmit={(e) => {
                                     e.preventDefault(),
@@ -125,13 +158,23 @@ export default function SearchPage()
                                     py: 0.3,
                                     px: 5,
                                 }}>
-                                    <Typography sx={{py: 0.7, flex: 5}}>
-                                        Sent Request
-                                    </Typography>
-                                    
-                                    <IconButton aria-label="open profile" /* onClick={} */>
-                                        <CancelOutlinedIcon/>
-                                    </IconButton>
+                                    {sentReqs.length == 0 ? (
+                                        <Typography align="center" sx={{py: 2}}>
+                                            You have no sent requests
+                                        </Typography>
+                                    ) : (
+                                        sentReqs.map((sentReq) => (
+                                            <Box key={sentReq.id}>
+                                                <Typography sx={{py: 0.7, flex: 5}}>
+                                                    {sentReq.name} 
+                                                </Typography>
+                                            
+                                                <IconButton aria-label="open profile" /* onClick={} */>
+                                                    <CancelOutlinedIcon/>
+                                                </IconButton>
+                                            </Box>
+                                        ))
+                                    )}
                                 </Stack>
                             </AccordionDetails>
                         </Accordion>
@@ -151,55 +194,75 @@ export default function SearchPage()
                                     py: 0.3,
                                     px: 5,
                                 }}>
-                                    <Typography sx={{py: 0.7, flex: 5}}>
-                                        Received request 
-                                    </Typography>
+                                    {receivedReqs.length == 0 ? (
+                                        <Typography align="center" sx={{py: 2}}>
+                                            You have no incoming requests
+                                        </Typography>
+                                    ) : (
+                                        sentReqs.map((sentReq) => (
+                                            <Box key={sentReq.id}>
+                                                <Typography sx={{py: 0.7, flex: 5}}>
+                                                    {sentReq.name} 
+                                                </Typography>
 
-                                    <Stack direction="row" spacing={1} sx={{flex: 1}}>
-                                        <IconButton aria-label="open profile" /* onClick={} */>
-                                            <CheckIcon/>
-                                        </IconButton>
+                                                <Stack direction="row" spacing={1} sx={{flex: 1}}>
+                                                    <IconButton aria-label="accept request" /* onClick={} */>
+                                                        <CheckIcon/>
+                                                    </IconButton>
 
-                                        <IconButton aria-label="invite to game" /* onClick={} */>
-                                            <CancelOutlinedIcon/>
-                                        </IconButton>
-                                    </Stack>
+                                                    <IconButton aria-label="deny request" /* onClick={} */>
+                                                        <CancelOutlinedIcon/>
+                                                    </IconButton>
+                                                </Stack>
+                                            </Box>
+                                        ))
+                                    )}
                                 </Stack>
                             </AccordionDetails>
                         </Accordion>
                         
                         <Stack>
-                            <Stack direction="row" sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    mt: 1,
-                                    py: 0.3,
-                                    px: 5,
-                            }}>
-                                <Typography sx={{flex: 5}}>
-                                    Friend Name
+                            {friends.length == 0 ? (
+                                <Typography align="center" sx={{py: 3, color: "theme.secondary"}}>
+                                    You currently have no friends
                                 </Typography>
+                            ) : (
+                                friends.map((friend) => (
+                                <Box key={friend.id}> {/* exists only to contain the enclosed elements in a single UI elem */}
+                                    <Stack direction="row" sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            mt: 1,
+                                            py: 0.3,
+                                            px: 5,
+                                    }}>
+                                        
+                                        <Typography sx={{flex: 5}}>
+                                            {friend.name}
+                                        </Typography>
 
-                                <Stack direction="row" spacing={1} sx={{flex: 1}}>
+                                        <Stack direction="row" spacing={1} sx={{flex: 1}}>
 
-                                    <IconButton aria-label="open chat" /* onClick={} */>
-                                        <ChatIcon/>
-                                    </IconButton>
+                                            <IconButton aria-label="open chat" /* onClick={} */>
+                                                <ChatIcon/>
+                                            </IconButton>
 
-                                    <IconButton aria-label="open profile" /* onClick={} */>
-                                        <AccountBoxIcon/>
-                                    </IconButton>
+                                            <IconButton aria-label="open profile" /* onClick={} */>
+                                                <AccountBoxIcon/>
+                                            </IconButton>
 
-                                    <IconButton aria-label="invite to game" /* onClick={} */>
-                                        <StyleIcon/>
-                                    </IconButton>
+                                            <IconButton aria-label="invite to game" /* onClick={} */>
+                                                <StyleIcon/>
+                                            </IconButton>
 
-                                </Stack>
-                            </Stack>
-                            <Divider variant="fullWidth" sx={{ borderBottomWidth: 2 }}/>
+                                        </Stack>
+                                    </Stack>
+                                    <Divider variant="fullWidth" sx={{ borderBottomWidth: 2 }}/>
+                                </Box>
+                                ))
+                            )}
                         </Stack>
-                        
                     </Stack>
                 </Paper>
             </Box>
