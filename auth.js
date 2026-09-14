@@ -39,21 +39,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // oauth https://authjs.dev/getting-started/providers/google
   ],
 
-  // might be necessary https://medium.com/@mrsaadmasood1/exploring-the-depths-of-next-auth-hell-part-2-07710a04985b
-  // callbacks: {
-  //   async jwt({ token, user, account }) {
-  //      // user from authorize function is returned here after
-  //      // if signIn callback returns true
-  //     return token
-  //   },
-  //   async session({ session, token }) {
-  //     // token from the jwt callback is returned here
-  //     return session
-  //   },
-  //   async signIn({ user, account }) {
-  //     // user from authorize function is return first here and
-  //     // it controls if the user is allowed to sign in
-  //     return true
-  //   }
-  // }
+	callbacks: {
+		async jwt({ token, user }) {
+			if (user)
+				token.id = user.id;
+			return token;
+		},
+		async session({ session, token }) {
+			if (session.user)
+				session.user.id = token.id;
+			return session;
+		}
+	}
 });

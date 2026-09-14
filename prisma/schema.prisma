@@ -181,12 +181,21 @@ model Card {
 // MATCHES - final result only, not round-by-round
 // ============================================================
 
+enum MatchStatus {
+  CHOOSING
+  DRAFTING
+  PLAYING
+  COMPLETE
+}
+
 model Match {
   id        String   @id @default(cuid())
   player1Id String
-  player2Id String   // for AI matches, points at the reserved User with isBot = true
+  player2Id String   // for AI matches, points at the reserved User with isVsAi = true
   winnerId  String?  // null for draws, probably never happening but kept just in case
   isVsAI    Boolean  @default(false)
+  status    MatchStatus @default(CHOOSING)
+  state     Json?       // live match state, data varies with the game state
   playedAt  DateTime @default(now())
 
   player1 User  @relation("MatchPlayer1", fields: [player1Id], references: [id])
