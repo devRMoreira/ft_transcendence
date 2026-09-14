@@ -1,19 +1,20 @@
 "use client"
 
 import LoadingButton from "@/components/LoadingButton"
-import { newMatchSubmit } from "@/services/api"
+import { newMatchSubmit, newAIMatchSubmit } from "@/services/api"
 
-import { Alert, Box, FormControl, Stack, TextField, Typography } from "@mui/material"
+import { Alert, Box, Button, FormControl, Stack, TextField, Typography } from "@mui/material"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export default function PlayPage() {
 	const router = useRouter()
+	const [mode, setMode] = useState("select")
 	const [opponentName, setOpponentName] = useState("")
 	const [error, setError] = useState("")
 	const [loading, setLoading] = useState(false)
 
-	const handleCreate = async (e) => {
+	const handleRealMatch = async (e) => {
 		e.preventDefault()
 		setError("")
 		setLoading(true)
@@ -28,13 +29,58 @@ export default function PlayPage() {
 		}
 	}
 
+	const handleAIMatch = async () => {
+		setError("")
+		setLoading(true)
+
+		try {
+			const data = await newAIMatchSubmit()
+			router.push(`/play/${data.id}`)
+		} catch (error) {
+			setError(error.message)
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	if (mode === "select") {
+		return (
+			<Box sx={{ maxWidth: "400px", mx: "auto", mt: 8, textAlign: "center" }}>
+				<Typography variant="h5" sx={{ mb: 3 }}>
+					Start a match
+				</Typography>
+
+				{error && (
+					<Alert severity="error" sx={{ mb: 2 }}>
+						{error}
+					</Alert>
+				)}
+
+				<Stack spacing={2}>
+					<Button variant="contained" size="large" onClick={() => setMode("person")}>
+						Play against a person
+					</Button>
+
+					<LoadingButton
+						variant="outlined"
+						size="large"
+						loading={loading}
+						onClick={handleAIMatch}
+					>
+						Play against AI
+					</LoadingButton>
+				</Stack>
+			</Box>
+		)
+	}
+
 	return (
 		<Box sx={{ maxWidth: "400px", mx: "auto", mt: 8, textAlign: "center" }}>
 			<Typography variant="h5">Start a match</Typography>
 
 			<Typography sx={{ mb: 2 }}>Enter the opponent's display name.</Typography>
 
-			<Stack component="form" spacing={2} onSubmit={handleCreate}>
+			<Stack component="form" spacing={2} onSubmit={handleRealMatch}>
 				{error && <Alert severity="error">{error}</Alert>}
 
 				<FormControl>
@@ -49,6 +95,8 @@ export default function PlayPage() {
 				<LoadingButton type="submit" variant="contained" loading={loading} fullWidth>
 					Create match
 				</LoadingButton>
+
+				<Button onClick={() => setMode("select")}>Back</Button>
 			</Stack>
 		</Box>
 	)
