@@ -82,7 +82,7 @@ export default function GroupSettingsPage() {
         <Typography component="h1" variant="h4">Group settings</Typography>
         {error && <Alert severity="error">{error}</Alert>}
         <Stack component="form" spacing={2} onSubmit={updateDescription}>
-          <TextField label="Description" value={description} onChange={(event) => setDescription(event.target.value)} inputProps={{ maxLength: 300 }} multiline minRows={3} />
+          <TextField label="Description" value={description} onChange={(event) => setDescription(event.target.value)} inputprops={{ maxLength: 300 }} multiline minRows={3} />
           <Button type="submit" variant="contained">Save description</Button>
         </Stack>
         <Stack component="form" spacing={2} onSubmit={inviteMember}>
