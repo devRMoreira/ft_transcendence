@@ -1,17 +1,19 @@
-"use client";
-
+import { auth } from "@/auth";
 import SignOutButton from "@/components/SignOutButton";
-import Link from "next/link";
 import { Button, Stack } from "@mui/material";
 
-export default function HomePage() {
+export default async function HomePage() {
+	const session = await auth();
+	const userName = session?.user?.name || "user";
+
 	return (
 		<Stack spacing={2} sx={{ p: 4 }}>
-			<Button component={Link} href="/groups" variant="contained">
+			Hey {userName}
+			<Button href="/groups" variant="contained">
 				Groups
 			</Button>
 			<SignOutButton />
-			Landing
+			Home Page
 		</Stack>
 	);
 }
