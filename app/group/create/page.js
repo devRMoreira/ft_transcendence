@@ -37,7 +37,7 @@ export default function CreateGroupPage() {
         <Typography component="h1" variant="h4">Create group</Typography>
         {error && <Alert severity="error">{error}</Alert>}
         <TextField label="Name" value={name} onChange={(event) => setName(event.target.value)} inputprops={{ maxLength: 15 }} required />
-        <TextField label="Description" value={description} onChange={(event) => setDescription(event.target.value)} inputProps={{ maxLength: 300 }} multiline minRows={4} />
+        <TextField label="Description" value={description} onChange={(event) => setDescription(event.target.value)} inputprops={{ maxLength: 300 }} multiline minRows={4} />
         <Button type="submit" variant="contained" disabled={saving}>{saving ? "Creating..." : "Create group"}</Button>
         <Button component="a" href="/groups" variant="text">Cancel</Button>
       </Stack>

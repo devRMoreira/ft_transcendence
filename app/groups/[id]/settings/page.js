@@ -12,6 +12,7 @@ export default function GroupSettingsPage() {
   const [requests, setRequests] = useState([]);
   const [userId, setUserId] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   async function load() {
     const groupResponse = await fetch(`/api/groups/${id}`);
@@ -48,13 +49,18 @@ export default function GroupSettingsPage() {
 
   async function inviteMember(event) {
     event.preventDefault();
+    setError("");
+    setSuccess("");
     const response = await fetch(`/api/groups/${id}/members`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId }),
     });
     if (!response.ok) setError((await response.json()).error || "Unable to invite member");
-    else setUserId("");
+    else {
+      setUserId("");
+      setSuccess("Invitation sent successfully.");
+    }
   }
 
   async function decideRequest(requestId, decision) {
@@ -87,7 +93,8 @@ export default function GroupSettingsPage() {
         </Stack>
         <Stack component="form" spacing={2} onSubmit={inviteMember}>
           <Typography variant="h6">Invite a player</Typography>
-          <TextField label="Player ID" value={userId} onChange={(event) => setUserId(event.target.value)} required />
+          {success && <Alert severity="success">{success}</Alert>}
+          <TextField label="Player ID, name, or email" value={userId} onChange={(event) => setUserId(event.target.value)} required />
           <Button type="submit" variant="outlined">Send invitation</Button>
         </Stack>
         <Typography variant="h6">Join requests</Typography>

@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import SignOutButton from "@/components/SignOutButton";
+import GroupInvitations from "@/components/GroupInvitations";
 import { Button, Stack } from "@mui/material";
 
 export default async function HomePage() {
@@ -10,6 +11,7 @@ export default async function HomePage() {
 		<Stack spacing={2} sx={{ p: 4 }}>
 			<h1>Home Page</h1>
 			Logged as: {userName}
+			<GroupInvitations />
 			<Button href="/groups" variant="contained">
 				Groups
 			</Button>
