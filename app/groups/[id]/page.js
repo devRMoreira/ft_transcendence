@@ -83,6 +83,7 @@ export default function GroupDetailsPage() {
           <TextField label="Write a post" value={content} onChange={(event) => setContent(event.target.value)} multiline required />
           {data.role === "ADMIN" && <FormControlLabel control={<Checkbox checked={isAnnouncement} onChange={(event) => setIsAnnouncement(event.target.checked)} />} label="Announcement" />}
           <Button type="submit" variant="contained">Publish</Button>
+		  <Button component={Link} href="/" variant="text">Back home</Button>
         </Stack>
       </Stack>
     </Container>
