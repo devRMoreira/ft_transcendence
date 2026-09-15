@@ -1,17 +1,22 @@
 import { prisma } from "@/lib/prisma"
+import { auth } from "@/auth"
 
 export async function GET(request)
 {
     try {
+        const session = await auth()
+        const userId = session?.user?.id
         const { searchParams } = new URL(request.url)
-        const userId = searchParams.get("userId")
         const type = searchParams.get("type") 
         const targetId = searchParams.get("targetId") 
 
-        if (!userId || !type)
-            return Response.json( {error: "Missing info for GET"}, {status: 400} )
+        if (!userId) 
+            return Response.json({ error: "Unauthorized" }, { status: 401 })
+
+        if (!type) 
+            return Response.json({ error: "Missing type parameter" }, { status: 400 })
     
-        if (type == "accepted")
+        if (type === "accepted")
         {
             const friendship = await prisma.friendship.findMany({
                 where: {
@@ -33,7 +38,7 @@ export async function GET(request)
             return Response.json({ data: friends })
         }
 
-        else if (type == "sent")
+        else if (type === "sent")
         {
             const sent = await prisma.friendship.findMany({
                 where: {
@@ -48,7 +53,7 @@ export async function GET(request)
             return Response.json({ data: sent })
         }
 
-        else if (type == "received")
+        else if (type === "received")
         {
             const received = await prisma.friendship.findMany({
                 where: {
@@ -63,9 +68,12 @@ export async function GET(request)
             return Response.json({ data: received })
         }
 
-        else if (type == "status")
-        {
-            const status = await prisma.friendship.findMany({
+        else if (type === "status") {
+            if (!targetId) {
+                return Response.json({ error: "Missing targetId parameter" }, { status: 400 })
+            }
+
+            const friendship = await prisma.friendship.findFirst({
                 where: {
                     OR: [
                         { requesterId: userId, addresseeId: targetId },
@@ -89,10 +97,16 @@ export async function GET(request)
 export async function POST(request) // SEND FRIEND REQUEST
 {
     try {
-        const { requesterId, recipient } = await request.json()
+        const session = await auth()
+        const requesterId = session?.user?.id
 
-        if (!requesterId || !recipient) {
-            return Response.json({ error: "Missing requesterId or recipient" }, { status: 400 })
+        if (!requesterId) 
+            return Response.json({ error: "Unauthorized" }, { status: 401 })
+
+        const { recipient } = await request.json()
+
+        if (!recipient) {
+            return Response.json({ error: "Missing recipient" }, { status: 400 })
         }
 
         const targetUser = await prisma.user.findFirst({
@@ -147,17 +161,27 @@ export async function POST(request) // SEND FRIEND REQUEST
     }
 }
 
-export async function PATCH(request) // ACCEPT FRIEND REQUEST
-{
+export async function PATCH(request) {
     try {
-        const { requesterId, addresseeId } = await request.json();
+        const session = await auth()
+        const userId = session?.user?.id
 
-        // MUST BE DONE BY ADDRESSEE - REQUIRES ACTION USER ID
+        if (!userId) 
+            return Response.json({ error: "Unauthorized" }, { status: 401 })
+
+        const { requestId, addresseeId } = await request.json()
+        const targetId = requestId || addresseeId
+
+        if (!targetId) {
+            return Response.json({ error: "Missing request identifier" }, { status: 400 })
+        }
         
-        // Relation exists in the right order
-        const existing = await prisma.friendship.findUnique({
+        const existing = await prisma.friendship.findFirst({
             where: {
-                requesterId_addresseeId: { requesterId, addresseeId },
+                OR: [
+                    { id: targetId },
+                    { requesterId: targetId, addresseeId: userId },
+                ],
             },
         });
 
@@ -165,27 +189,71 @@ export async function PATCH(request) // ACCEPT FRIEND REQUEST
             return Response.json({ error: "Friend request not found." }, { status: 404 });
         }
 
+        // Only the addressee (recipient) can accept the request
+        if (existing.addresseeId !== userId) {
+            return Response.json({ error: "Unauthorized to accept this request." }, { status: 403 });
+        }
+
         if (existing.status === "ACCEPTED") {
             return Response.json({ error: "Request already accepted." }, { status: 400 });
         }
 
-        // success: update friendship
         const updated = await prisma.friendship.update({
-            where: {
-                requesterId_addresseeId: {
-                    requesterId,
-                    addresseeId,
-                },
-            },
-            data: {
-                status: "ACCEPTED",
-            },
+            where: { id: existing.id },
+            data: { status: "ACCEPTED" },
         });
 
         return Response.json({ success: true, friendship: updated });
     }
     catch (error) {
         return Response.json({ error: "Failed to accept request" }, { status: 500 });
+    }
+}
+
+export async function DELETE(request) {
+    try {
+        const session = await auth()
+        const userId = session?.user?.id
+
+        if (!userId) 
+            return Response.json({ error: "Unauthorized" }, { status: 401 })
+
+        const { requestId, action } = await request.json()
+
+        if (!requestId) {
+            return Response.json({ error: "Missing requestId" }, { status: 400 })
+        }
+
+        const existing = await prisma.friendship.findUnique({
+            where: { id: requestId },
+        })
+
+        if (!existing) {
+            return Response.json({ error: "Friend request not found." }, { status: 404 })
+        }
+
+        // Action-based permission checks
+        if (action === "cancel" && existing.requesterId !== userId) {
+            return Response.json({ error: "Not authorized to cancel this request" }, { status: 403 })
+        }
+
+        if (action === "decline" && existing.addresseeId !== userId) {
+            return Response.json({ error: "Not authorized to decline this request" }, { status: 403 })
+        }
+
+        // General fallback check: user must be either requester or addressee
+        if (existing.requesterId !== userId && existing.addresseeId !== userId) {
+            return Response.json({ error: "Unauthorized" }, { status: 403 })
+        }
+
+        await prisma.friendship.delete({
+            where: { id: requestId },
+        })
+
+        return Response.json({ success: true })
+    }
+    catch (error) {
+        return Response.json({ error: "Failed to delete request" }, { status: 500 })
     }
 }
 

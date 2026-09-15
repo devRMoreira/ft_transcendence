@@ -1,40 +1,39 @@
-export async function fetchFriendData(userId, reqType) 
+export async function fetchFriendData(reqType) 
 {
-    if (!userId)
-        return [];
-
-    const res = await fetch(`/api/friends?userId=${userId}&type=${reqType}`, { method: "GET" })
+    const res = await fetch(`/api/friends?type=${reqType}`, { method: "GET" })
     
-    if (!res.ok)
-	{
-		console.error(`friend data query failed with status: ${res.status}`)
-        return []
-	}
+    if (!res.ok) {
+        if (res.status === 401) return [];
+
+        console.error(`friend data query failed with status: ${res.status}`);
+        return [];
+    }
+    
     const json = await res.json()
     return json.data || []
 }
 
-export async function getFriends(userId) // fetch accepted friends to display in list
+export async function getFriends() // fetch accepted friends to display in list
 {
-    return fetchFriendData(userId, "accepted");
+    return fetchFriendData("accepted");
 }
 
-export async function getPendingReqSent(userId) // fetch requests to display in SENT
+export async function getPendingReqSent() // fetch requests to display in SENT
 {
-    return fetchFriendData(userId, "sent");
+    return fetchFriendData("sent");
 }
 
-export async function getPendingReqReceived(userId) // fetch requests to display in RECEIVED
+export async function getPendingReqReceived() // fetch requests to display in RECEIVED
 {
-    return fetchFriendData(userId, "received");
+    return fetchFriendData("received");
 }
 
-export async function getFriendStatus(userId1, userId2) 
+export async function getFriendStatus(userId2) 
 {
-    if (!userId1 || !userId2)
+    if (!userId2)
         return [];
 
-    const res = await fetch(`/api/friends?userId=${userId1}&type=status&targetId=${userId2}`, { method: "GET" })
+    const res = await fetch(`/api/friends?type=status&targetId=${userId2}`, { method: "GET" })
     if (!res.ok)
 	{
 		console.error(`friend status query failed with status: ${res.status}`)
@@ -44,12 +43,12 @@ export async function getFriendStatus(userId1, userId2)
     return json.data || []
 }
 
-export async function sendFriendReq(requesterId, recipient) 
+export async function sendFriendReq(recipient) 
 {
     const res = await fetch("/api/friends", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ requesterId, recipient }),
+        body: JSON.stringify({ recipient }),
     })
 
     const json = await res.json()
@@ -63,12 +62,12 @@ export async function sendFriendReq(requesterId, recipient)
     return json
 }
 
-export async function acceptFriendReq(requesterId, addresseeId) 
+export async function acceptFriendReq(addresseeId) 
 {
     const res = await fetch("/api/friends", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ requesterId, addresseeId }),
+        body: JSON.stringify({ addresseeId }),
     })
 
     if (!res.ok)
@@ -76,6 +75,40 @@ export async function acceptFriendReq(requesterId, addresseeId)
 		console.error(`accept friend req failed with status: ${res.status}`)
         return []
 	}
- 
+
     return await res.json()
+}
+
+export async function cancelFriendReq(requestId) {
+    const res = await fetch("/api/friends", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requestId, action: "cancel" }),
+    })
+
+    const json = await res.json().catch(() => ({}))
+
+    if (!res.ok) {
+        console.error(`Cancel friend req failed with status: ${res.status}`)
+        return { error: json.error || "Failed to cancel request" }
+    }
+
+    return json
+}
+
+export async function declineFriendReq(requestId) {
+    const res = await fetch("/api/friends", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requestId, action: "decline" }),
+    })
+
+    const json = await res.json().catch(() => ({}))
+
+    if (!res.ok) {
+        console.error(`Decline friend req failed with status: ${res.status}`)
+        return { error: json.error || "Failed to decline request" }
+    }
+
+    return json
 }
