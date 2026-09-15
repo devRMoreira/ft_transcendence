@@ -1,3 +1,5 @@
+"use client";
+
 import SignOutButton from "@/components/SignOutButton";
 import Link from "next/link";
 import { Button, Stack } from "@mui/material";
