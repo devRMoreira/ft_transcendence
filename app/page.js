@@ -8,12 +8,12 @@ export default async function HomePage() {
 
 	return (
 		<Stack spacing={2} sx={{ p: 4 }}>
-			Hey {userName}
+			<h1>Home Page</h1>
+			Logged as: {userName}
 			<Button href="/groups" variant="contained">
 				Groups
 			</Button>
 			<SignOutButton />
-			Home Page
 		</Stack>
 	);
 }
