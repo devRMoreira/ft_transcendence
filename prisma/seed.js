@@ -391,12 +391,12 @@ async function seedSocialGraph(users) {
 
   await prisma.groupMembership.upsert({
     where: { groupId_userId: { groupId: group.id, userId: dev1.id } },
-    update: {},
+    update: { role: "ADMIN" },
     create: { groupId: group.id, userId: dev1.id, role: "ADMIN" },
   });
   await prisma.groupMembership.upsert({
     where: { groupId_userId: { groupId: group.id, userId: dev2.id } },
-    update: {},
+    update: { role: "MEMBER" },
     create: { groupId: group.id, userId: dev2.id, role: "MEMBER" },
   });
 
