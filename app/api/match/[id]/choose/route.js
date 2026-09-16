@@ -2,6 +2,8 @@ import { getPlayerRole } from "@/lib/game/authorize"
 import { buildDraftState } from "@/lib/game/draft"
 import { sanitizeMatchForPlayer } from "@/lib/game/sanitize"
 import { prisma } from "@/lib/prisma"
+import { checkAIMove } from "@/services/aiMatch"
+import { matchTick } from "@/services/matchActivity"
 
 export async function POST(req, { params }) {
 	const { id } = await params
@@ -33,5 +35,6 @@ export async function POST(req, { params }) {
 		data: { status: "DRAFTING", state: draftState },
 	})
 
-	return Response.json(sanitizeMatchForPlayer(updated, role))
+	const current = await matchTick(advanced, role)
+	return Response.json(sanitizeMatchForPlayer(current, role))
 }
