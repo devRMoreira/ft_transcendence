@@ -1,13 +1,14 @@
 "use client"
 
-import { Container, Box, Stack, Typography, Paper, Divider, Button, IconButton, Popover, Accordion, AccordionSummary, AccordionDetails, Collapse, TextField } from "@mui/material";
+import { Container, Box, Stack, Typography, Paper, Divider, Button, IconButton, TextField } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
 import StyleIcon from '@mui/icons-material/Style';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { getConversationList, getMessageHistory, sendMessage } from "../../services/messages.js";
 
 import { useEffect, useState, useRef } from "react";
 
-export default function messagesPage()
+export default function MessagesPage()
 {
     const [conversationList, setConversationList] = useState([])
     const [selectedPartner, setSelectedPartner] = useState(null)
@@ -54,6 +55,41 @@ export default function messagesPage()
         scrollToBottom();
     }, [messageHistory]);
 
+    const handleSendMessage = async (e) => {
+        e.preventDefault()
+        if (!messageText.trim() || !selectedPartner?.id || sending)
+            return
+
+        setSending(true)
+        try {
+            const response = await sendMessage(selectedPartner.id, messageText)
+
+            const newMsg = response || {
+                id: Date.now(),
+                content: messageText,
+                sender: { id: "current-user", name: "You"}
+            }
+
+            setMessageHistory((prev) => [...prev, newMsg])
+
+            setConversationList((prev) =>
+                prev.map((item) =>
+                    item.partner.id === selectedPartner.id
+                        ? { ...item, lastMessage: { id: newMsg.id, content: messageText }}
+                        : item
+                )
+            )
+
+            setMessageText("")
+        } 
+        catch (error) {
+            console.error("Failed to send message:", error);
+        } 
+        finally {
+            setSending(false);
+        }
+    }
+
     return(
         <Container maxWidth="lg">
             <Box sx={{
@@ -62,69 +98,92 @@ export default function messagesPage()
                 alignItems: "center",
                 justifyContent: "center"
             }}>
-                <Paper sx={{ width: "100%", minHeight: "60dvh", display: "flex"}}>
+                <Paper sx={{ width: "100%", height: "80dvh", display: "flex", overflow: "hidden"}}>
                     <Stack direction="row" sx={{ width: "100%", display: "flex", }}>
-                        <Stack divider={<Divider flexItem variant="fullWidth" sx={{ borderBottomWidth: 2 }}/>} sx={{ flex: 1,}}>
-                            {conversationList.map((conversation) =>
-                                <Box key={conversation.lastMessage.id}> {/* exists only to contain the enclosed elements in a single UI elem */}
-                                    <Stack sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5, px: 2 }}>
 
-                                        <Stack direction="row" spacing={1} sx={{ alignItems: "center"}}>
+                        {/* LEFT PANE WITH CONVERSATION LIST */}
+
+                        <Stack divider={<Divider flexItem variant="fullWidth" sx={{ borderBottomWidth: 2 }}/>} sx={{flex: 1, overflowY: "auto", }}>
+                            {conversationList.length == 0 ? (
+                                <Typography align="center">
+                                    No conversations to show
+                                </Typography>
+                            ) : (
+                                conversationList.map((conversation) => (
+                                    <Box key={conversation.lastMessage.id}>
+                                        <Stack onClick={() => setSelectedPartner(conversation.partner)} sx={{
+                                            py: 1.5,
+                                            px: 2,
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            backgroundColor: selectedPartner?.id === conversation.partner.id ? 'action.selected' : 'transparent',
+                                        }}>
                                             <Typography>
                                                 {conversation.partner.name}
                                             </Typography>
-                                            <IconButton aria-label="invite to game">
-                                                <StyleIcon/>
-                                            </IconButton>
+                                            <Typography noWrap sx={{ fontSize: "0.9rem"}}>
+                                                {conversation.lastMessage.content}
+                                            </Typography>
                                         </Stack>
-
-                                        <Typography noWrap sx={{pl: 1, fontSize: "0.9rem"}}>
-                                            {conversation.lastMessage.content}
-                                        </Typography>
-                                    </Stack>
-                                </Box>
+                                    </Box>
+                                ))
                             )}
                         </Stack>
 
                         <Divider orientation="vertical" flexItem variant="fullWidth" sx={{ borderRightWidth: 2 }} />
 
-                        <Box sx={{ py: 1.5, px: 2, flex: 3, display: "flex", flexDirection: "column", height: "100%"}}>
-                            <Box sx={{display: "flex", flex: 1, overflowY: "auto", flexDirection: "column", minHeight: 0, mb: 1.5, background: "theme.lighter"}}>
-                                <Typography sx={{fontWeight: 700}}>
-                                    Chat with {selectedPartner?.name}
-                                </Typography>
-                                <Box sx={{ flex: 1, overflowY: "auto", mt: 1, py: 1, px:2, backgroundColor: 'background.lighter'}}>
-                                    {messageHistory.map((msg) => 
+                        {/* RIGHT PANE WITH SINGLE CONVERSATION */}
+
+                        <Box sx={{ py: 1, px: 2, flex: 3, display: "flex", flexDirection: "column", height: "100%"}}>
+                            <Box sx={{display: "flex", flex: 1, overflowY: "auto", flexDirection: "column", minHeight: 0, mb: 1.5, }}>
+                                <Stack direction="row" spacing={0.5} sx={{ width: "100%", alignItems: "center"}}>
+                                    <Typography sx={{pr: 2, fontWeight: 700}}>
+                                        Chat with {selectedPartner?.name}
+                                    </Typography>
+                                    <IconButton aria-label="invite to game">
+                                        <AccountBoxIcon/>
+                                    </IconButton>
+                                    <IconButton aria-label="invite to game">
+                                        <StyleIcon/>
+                                    </IconButton>
+                                </Stack>
+                                <Box sx={{ flex: 1, overflowY: "auto", mt: 1, py: 1.5, px:2, backgroundColor: "background.lighter"}}>
+                                    {messageHistory.map((msg) => (
                                         <Stack key={msg.id}>
-                                            <Typography sx={{fontSize: "0.9rem", color: msg.sender.id == selectedPartner.id ? "#FFFFFF" : "theme.secondary"}}>
-                                                {msg.sender.name}: {msg.content}
+                                            <Typography sx={{fontSize: "0.9rem", color: msg.sender.id == selectedPartner?.id ? "text.primary" : "#BBBBBB"}}>
+                                                <strong>{msg.sender.name}:</strong> {msg.content}
                                             </Typography>
                                         </Stack>                                
-                                    )}
+                                    ))}
+                                    <div ref={messagesEndRef} />
                                 </Box>
                             </Box>
-                            <Stack /* onSubmit={handleAddFriend} */ component="form" direction="row" sx={{
+                            <Stack onSubmit={handleSendMessage} spacing={1.5} component="form" direction="row" sx={{
+                                pb: 0.5,
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'space-between',
                             }}>
                                 <TextField
                                     fullWidth
-                                    placeholder="Enter email or username..."
+                                    placeholder="send a message"
                                     variant="outlined"
-                                    /* value={} */
-                                    /* onChange={} */
-                                    /* disabled={loading} */
+                                    value={messageText}
+                                    onChange={(e) => setMessageText(e.target.value)}
+                                    disabled={sending || !selectedPartner}
                                 />
                                 <Button
                                     type="submit"
                                     variant="contained"
-                                    startIcon={<SendIcon />}
-                                    /* disabled={loading} */
+                                    endIcon={<SendIcon />}
+                                    disabled={sending || !messageText.trim() || !selectedPartner}
                                     sx={{ whiteSpace: 'nowrap' }}
-                                ></Button>
+                                >
+                                    send
+                                </Button>
                             </Stack>
                         </Box>
+
                     </Stack>
                 </Paper>
             </Box>
@@ -132,9 +191,3 @@ export default function messagesPage()
     );
 
 }    
-
-// direction="row" alignitems="center" justifycontent="space-between" 
-
-    // Friends System
-    // Backend - endpoints to send, accept, decline, and list friend requests. Friendship model (PENDING/ACCEPTED/DECLINED) already exists in the schema.
-    // Frontend - friends list view, send-request UI (by email or name), accept/decline UI for incoming requests.

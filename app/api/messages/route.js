@@ -98,3 +98,42 @@ export async function GET(request)
         return Response.json({ error: "Internal server error" }, { status: 500 })
     }
 }
+
+export async function POST(request) // SEND FRIEND REQUEST
+{
+    try {
+        const session = await auth()
+        const senderId = session?.user?.id
+
+        if (!senderId) 
+            return Response.json({ error: "Unauthorized" }, { status: 401 })
+
+        const { receiverId, content } = await request.json()
+
+        if (!receiverId || !content?.trim()) 
+            return Response.json( { error: "Receiver ID and content are required." }, { status: 400 } )
+
+        if (senderId === receiverId)
+            return Response.json( { error: "Cannot message self." }, { status: 400 } )
+
+        const newMsg = await prisma.message.create({
+            data: {
+                senderId,
+                receiverId,
+                content: content.trim(),
+            },
+            include: {
+                sender: {
+                    select: { id: true, name: true}
+                }
+            }
+        })
+
+        return Response.json(newMsg)
+    }
+    
+    catch (error) {
+        console.error("API /messages error:", error)
+        return Response.json({ error: "Internal server error" }, { status: 500 })
+    }
+}

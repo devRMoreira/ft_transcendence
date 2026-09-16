@@ -32,12 +32,11 @@ export async function sendMessage(receiverId, content) {
         body: JSON.stringify({ receiverId, content }),
     })
 
-    const json = await res.json()
-
     if (!res.ok) {
-        console.error(`Send message failed: ${json.error || res.status}`)
-        return { error: json.error || "Failed to send message" }
+        console.error(`Send message failed: ${res.status}`)
+        throw new Error(`Failed to send message (${res.status})`);
     }
 
-    return json
+    const text = await res.text()
+    return text ? JSON.parse(text) : null
 }

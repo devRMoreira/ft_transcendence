@@ -13,7 +13,7 @@ import SendIcon from '@mui/icons-material/Send';
 import { getFriends, getPendingReqSent, getPendingReqReceived, getFriendStatus, sendFriendReq, acceptFriendReq, cancelFriendReq, declineFriendReq } from "../../services/friends";
 import { useCallback, useEffect, useState } from "react";
 
-export default function friendsPage()
+export default function FriendsPage()
 {
     //for accordion tabs
     const [expanded, setExpanded] = useState(false); 
@@ -52,73 +52,73 @@ export default function friendsPage()
     }, [loadData])
 
     const handleAddFriend = async (e) => {
-        e.preventDefault();
+        e.preventDefault()
         
         const recipient = addFriendInput.trim();
-        if (!recipient) return;
+        if (!recipient) return
 
         setLoading(true);
         try {
-            const res = await sendFriendReq(recipient);
+            const res = await sendFriendReq(recipient)
             
             if (res?.error) {
-                alert(res.error);
+                alert(res.error)
             } else {
-                setAddFriendInput(""); // Clear field on success
-                await loadData();      // Refresh list to show new pending request
+                setAddFriendInput("")
+                await loadData()
             }
         } catch (err) {
-            console.error("Error sending request:", err);
+            console.error("Error sending request:", err)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
     };
 
     const handleAcceptRequest = async (requestId) => {
-        setLoading(true);
+        setLoading(true)
         try {
-            const res = await acceptFriendReq(requestId);
+            const res = await acceptFriendReq(requestId)
             if (res?.error) {
-                alert(res.error);
+                alert(res.error)
             } else {
-                await loadData();
+                await loadData()
             }
         } catch (err) {
-            console.error("Error accepting friend request:", err);
+            console.error("Error accepting friend request:", err)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
     };
 
     const handleCancelSentRequest = async (requestId) => {
-        setLoading(true);
+        setLoading(true)
         try {
             const res = await cancelFriendReq(requestId);
             if (res?.error) {
-                alert(res.error);
+                alert(res.error)
             } else {
-                await loadData(); 
+                await loadData()
             }
         } catch (err) {
-            console.error("Error canceling request:", err);
+            console.error("Error canceling request:", err)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
     };
 
     const handleDeclineRequest = async (requestId) => {
-        setLoading(true);
+        setLoading(true)
         try {
-            const res = await declineFriendReq(requestId);
+            const res = await declineFriendReq(requestId)
             if (res?.error) {
-                alert(res.error);
+                alert(res.error)
             } else {
-                await loadData();
+                await loadData()
             }
         } catch (err) {
-            console.error("Error declining request:", err);
+            console.error("Error declining request:", err)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
     };
 
