@@ -50,3 +50,7 @@ export function submitMatchAction(matchId, action, body) {
 		body: JSON.stringify(body || {}),
 	})
 }
+
+export function fetchActiveMatch() {
+	return apiFetch("/api/match/active")
+}
