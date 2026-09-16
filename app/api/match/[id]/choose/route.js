@@ -21,7 +21,7 @@ export async function POST(req, { params }) {
 	if (role !== rollWinner)
 		return Response.json({ error: "You didn't win the roll, can't choose" }, { status: 403 })
 
-	const choice = await req.json()
+	const {choice} = await req.json()
 	const otherPlayer = rollWinner === "player1" ? "player2" : "player1"
 	const firstPick = choice === "firstPick" ? rollWinner : otherPlayer
 	const tokenHolder = choice === "firstPick" ? otherPlayer : rollWinner
@@ -35,6 +35,6 @@ export async function POST(req, { params }) {
 		data: { status: "DRAFTING", state: draftState },
 	})
 
-	const current = await matchTick(advanced, role)
+	const current = await matchTick(updated, role)
 	return Response.json(sanitizeMatchForPlayer(current, role))
 }

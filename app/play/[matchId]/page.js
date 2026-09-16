@@ -105,7 +105,7 @@ export default function MatchPage() {
 
 	return (
 		<Box sx={{ maxWidth: 720, mx: "auto", mt: 4, p: 2 }}>
-			{error && <Alert severity="error">{error.page}</Alert>}
+			{error && <Alert severity="error">{error}</Alert>}
 
 			{match.status === "CHOOSING" && (
 				<GameChoosingPhase

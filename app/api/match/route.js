@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { decideRollWin } from "@/lib/game/draft"
+import { sanitizeMatchForPlayer } from "@/lib/game/sanitize"
 import { prisma } from "@/lib/prisma"
 import { checkAIMove } from "@/services/aiMatch"
 import { checkAbandonedMatches, isAbandoned } from "@/services/matchActivity"
@@ -29,7 +30,7 @@ export async function POST(req) {
 				{ status: 409 }
 			)
 
-		await prisma.match.update({ were: { id: existing.id }, data: { status: "ABANDONED" } })
+		await prisma.match.update({ where: { id: existing.id }, data: { status: "ABANDONED" } })
 	}
 
 	const { opponentName, isVsAI } = await req.json()
@@ -71,7 +72,6 @@ export async function POST(req) {
 		},
 	})
 
-	if (match.isVsAI) return Response.json(await checkAIMove(match))
-
-	return Response.json(match)
+	await checkAIMove(match)
+	return Response.json(sanitizeMatchForPlayer(match, "player1"))
 }

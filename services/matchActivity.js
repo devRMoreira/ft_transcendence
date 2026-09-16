@@ -17,7 +17,7 @@ export function isAbandoned(match) {
 	const now = Date.now()
 	const p1Stale = isStale(match, "player1", now)
 
-	if (match.isVsAi) return p1Stale
+	if (match.isVsAI) return p1Stale
 
 	return p1Stale && isStale(match, "player2", now)
 }
@@ -49,7 +49,7 @@ async function updateTimestamps(match, role) {
 		data: { [field]: new Date(now) },
 	})
 
-	if (updated.isVsAi) return updated
+	if (updated.isVsAI) return updated
 
 	const opp = role === "player1" ? "player2" : "player1"
 	if (isStale(updated, opp, now)) {
@@ -76,6 +76,6 @@ export async function matchTick(match, role) {
 	let current = await updateTimestamps(match, role)
 
 	if (current.status === "COMPLETE" || current.status === "ABANDONED") return current
-	checkAIMove(current)
+	await checkAIMove(current)
 	return current
 }
