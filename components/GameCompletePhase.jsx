@@ -18,7 +18,7 @@ export function GameCompletePhase({ match, you }) {
 
 			<Typography variant="h6" color="text.secondary" gutterBottom>
 				Final score <br />
-				{scores.player1} : {scores.player2}
+				{scores?.player1} : {scores?.player2}
 			</Typography>
 
 			<GameRoundHistory log={log} you={you} />
