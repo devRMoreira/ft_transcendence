@@ -37,10 +37,28 @@ export async function POST(request, { params }) {
   if (isAnnouncement && access.membership.role !== "ADMIN") {
     return Response.json({ error: "Only group admins can create announcements" }, { status: 403 });
   }
+// Remove the last comment. This function do not save the announcement for future logs!
+// If want future logs, change function logic.
+  const post = await prisma.$transaction(async (transaction) => {
+    const createdPost = await transaction.post.create({
+      data: { groupId: id, authorId: session.user.id, content, isAnnouncement },
+      include: { author: { select: { id: true, name: true } } },
+    });
 
-  const post = await prisma.post.create({
-    data: { groupId: id, authorId: session.user.id, content, isAnnouncement },
-    include: { author: { select: { id: true, name: true } } },
+    if (isAnnouncement) {
+      const announcements = await transaction.post.findMany({
+        where: { groupId: id, isAnnouncement: true },
+        orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+        select: { id: true },
+      });
+
+      const announcementsToDelete = announcements.slice(0, -3).map((announcement) => announcement.id);
+      if (announcementsToDelete.length > 0) {
+        await transaction.post.deleteMany({ where: { id: { in: announcementsToDelete } } });
+      }
+    }
+
+    return createdPost;
   });
 
   return Response.json({ post }, { status: 201 });
