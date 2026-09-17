@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Alert, Button, Checkbox, Container, FormControlLabel, List, ListItem, ListItemText, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Checkbox, Container, FormControlLabel, List, ListItem, ListItemText, Stack, TextField, Typography } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -78,7 +78,9 @@ export default function GroupDetailsPage() {
         <Typography variant="h5">Members</Typography>
         <List>{data.group.members.map((member) => <ListItem key={member.id}><ListItemText primary={member.user.name || "Unnamed player"} secondary={member.role} /></ListItem>)}</List>
         <Typography variant="h5">Posts</Typography>
-        <List>{posts.map((post) => <ListItem key={post.id}><ListItemText primary={post.content} secondary={post.author.name || "Unknown"} /></ListItem>)}</List>
+        <Box sx={{ maxHeight: 320, overflowY: "auto", border: 1, borderColor: "divider", borderRadius: 1 }}>
+          <List>{posts.map((post) => <ListItem key={post.id}><ListItemText primary={post.content} secondary={post.author.name || "Unknown"} /></ListItem>)}</List>
+        </Box>
         <Stack component="form" spacing={2} onSubmit={createPost}>
           <TextField label="Write a post" value={content} onChange={(event) => setContent(event.target.value)} multiline required />
           {data.role === "ADMIN" && <FormControlLabel control={<Checkbox checked={isAnnouncement} onChange={(event) => setIsAnnouncement(event.target.checked)} />} label="Announcement" />}
