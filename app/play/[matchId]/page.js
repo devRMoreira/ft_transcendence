@@ -10,7 +10,7 @@ import { useParams } from "next/navigation"
 import { useCallback, useEffect, useRef, useState } from "react"
 
 const POLL_INTERVAL = 1500
-const RESOLVE_DELAY = 2000
+const RESOLVE_DELAY = 3000
 
 export default function MatchPage() {
 	const { matchId } = useParams()

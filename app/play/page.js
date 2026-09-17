@@ -5,7 +5,7 @@ import { newMatchSubmit, newAIMatchSubmit, fetchActiveMatch } from "@/services/a
 // prettier-ignore
 import { Alert, Box, Button, CircularProgress, FormControl, Stack, TextField, Typography } from "@mui/material"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 export default function PlayPage() {
 	const router = useRouter()
@@ -16,12 +16,7 @@ export default function PlayPage() {
 	const [loadingActive, setLoadingActive] = useState(true)
 	const [loading, setLoading] = useState(false)
 
-	useEffect(() => {
-		handleActiveMatch()
-	}, [])
-
-	const handleActiveMatch = async () => {
-		console.log("here")
+	const handleActiveMatch = useCallback(async () => {
 		try {
 			const data = await fetchActiveMatch()
 			setActiveMatch(data.active ? data.match : null)
@@ -30,7 +25,15 @@ export default function PlayPage() {
 		} finally {
 			setLoadingActive(false)
 		}
-	}
+	}, [])
+
+	useEffect(() => {
+		handleActiveMatch()
+
+		const interval = setInterval(handleActiveMatch, 2000)
+
+		return () => clearInterval(interval)
+	}, [handleActiveMatch])
 
 	const handleRealMatch = async (e) => {
 		e.preventDefault()
