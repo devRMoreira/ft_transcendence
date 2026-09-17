@@ -5,6 +5,7 @@ export function GameCompletePhase({ match, you }) {
 	const { winner, scores, log } = match.state
 	const won = winner === you
 
+	console.log(match)
 	return (
 		<Box sx={{ textAlign: "center", mt: 4 }}>
 			<Typography
@@ -17,12 +18,18 @@ export function GameCompletePhase({ match, you }) {
 			</Typography>
 
 			<Typography variant="h6" color="text.secondary" gutterBottom>
-				Final score <br />
-				{scores?.player1 !== undefined && scores?.player2 !== undefined
-					? you === "player1"
-						? `${scores.player1} : ${scores.player2}`
-						: `${scores.player2} : ${scores.player1}`
-					: "- : -"}
+				{match.state?.forfeited === true ? (
+					"Opponent abandoned the match"
+				) : (
+					<>
+						Final score <br />
+						{scores?.player1 !== undefined && scores?.player2 !== undefined
+							? you === "player1"
+								? `${scores.player1} : ${scores.player2}`
+								: `${scores.player2} : ${scores.player1}`
+							: "- : -"}
+					</>
+				)}
 			</Typography>
 
 			<GameRoundHistory log={log} you={you} />
