@@ -1,10 +1,10 @@
 "use client"
 
-import { Container, Box, CircularProgress, Stack, Typography, Paper, Divider } from "@mui/material";
+import { Container, Box, Stack, Typography, Paper, Divider } from "@mui/material";
 import { getUserData } from "../../services/profile";
 import { useEffect, useState } from "react";
 
-export default function SearchPage()
+export default function ProfilePage()
 {
     const [userData, setUserData] = useState();
     const [loading, setLoading] = useState(true);
