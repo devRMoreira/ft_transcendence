@@ -2,7 +2,6 @@ import { getPlayerRole } from "@/lib/game/authorize"
 import { buildDraftState } from "@/lib/game/draft"
 import { sanitizeMatchForPlayer } from "@/lib/game/sanitize"
 import { prisma } from "@/lib/prisma"
-import { checkAIMove } from "@/services/aiMatch"
 import { matchTick } from "@/services/matchActivity"
 
 export async function POST(req, { params }) {
@@ -21,7 +20,7 @@ export async function POST(req, { params }) {
 	if (role !== rollWinner)
 		return Response.json({ error: "You didn't win the roll, can't choose" }, { status: 403 })
 
-	const {choice} = await req.json()
+	const { choice } = await req.json()
 	const otherPlayer = rollWinner === "player1" ? "player2" : "player1"
 	const firstPick = choice === "firstPick" ? rollWinner : otherPlayer
 	const tokenHolder = choice === "firstPick" ? otherPlayer : rollWinner

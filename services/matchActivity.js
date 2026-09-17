@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma"
 import { checkAIMove } from "./aiMatch"
-
 const ACTIVE_STATUS = ["CHOOSING", "DRAFTING", "PLAYING"]
 const STALE_LIMIT = 60000
 
@@ -73,9 +72,11 @@ async function updateTimestamps(match, role) {
 }
 
 export async function matchTick(match, role) {
-	let current = await updateTimestamps(match, role)
+	const current = await updateTimestamps(match, role)
 
 	if (current.status === "COMPLETE" || current.status === "ABANDONED") return current
-	await checkAIMove(current)
-	return current
+
+	const updated = await checkAIMove(current)
+
+	return updated
 }

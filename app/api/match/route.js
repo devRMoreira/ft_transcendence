@@ -72,6 +72,6 @@ export async function POST(req) {
 		},
 	})
 
-	await checkAIMove(match)
-	return Response.json(sanitizeMatchForPlayer(match, "player1"))
+	const updated = await checkAIMove(match)
+	return Response.json(sanitizeMatchForPlayer(updated, "player1"))
 }
