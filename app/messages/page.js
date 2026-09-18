@@ -105,8 +105,8 @@ export default function MessagesPage()
 
                         <Stack divider={<Divider flexItem variant="fullWidth" sx={{ borderBottomWidth: 2 }}/>} sx={{flex: 1, overflowY: "auto", }}>
                             {conversationList.length == 0 ? (
-                                <Typography align="center">
-                                    No conversations to show
+                                <Typography sx={{px: 2, py: 1.7}}>
+                                    No chats to show
                                 </Typography>
                             ) : (
                                 conversationList.map((conversation) => (
