@@ -5,11 +5,15 @@ import SendIcon from '@mui/icons-material/Send';
 import StyleIcon from '@mui/icons-material/Style';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { getConversationList, getMessageHistory, sendMessage } from "../../services/messages.js";
-
 import { useEffect, useState, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function MessagesPage()
 {
+    const searchParams = useSearchParams()
+    const targetUserId = searchParams.get("targetUserId")
+    const targetUserName = searchParams.get("targetName")
+
     const [conversationList, setConversationList] = useState([])
     const [selectedPartner, setSelectedPartner] = useState(null)
     const [messageHistory, setMessageHistory] = useState([])
@@ -28,15 +32,31 @@ export default function MessagesPage()
     useEffect(() => {
         async function loadConversationList() {
             setLoadingConversationList(true)
-            const data = await getConversationList()
+            const data = ( await getConversationList() ) || []
             setConversationList(data)
-            if (data.length > 0) {
+
+            if (targetUserId)
+            {
+                const existingChat = data.find((c) => c.partner?.id === targetUserId)
+
+                if (existingChat)
+                    setSelectedPartner(existingChat.partner)
+                else{
+                    setSelectedPartner({
+                        id: targetUserId,
+                        name: targetUserName || "User",
+                        isDraft: true,
+                    })
+                }
+            } 
+            else if (data.length > 0) {
                 setSelectedPartner(data[0].partner)
             }
+
             setLoadingConversationList(false)
         }
         loadConversationList()
-    }, [])
+    }, [targetUserId, targetUserName])
 
     useEffect(() => {
         if (!selectedPartner?.id)
@@ -72,13 +92,24 @@ export default function MessagesPage()
 
             setMessageHistory((prev) => [...prev, newMsg])
 
-            setConversationList((prev) =>
-                prev.map((item) =>
-                    item.partner.id === selectedPartner.id
-                        ? { ...item, lastMessage: { id: newMsg.id, content: messageText }}
+            setConversationList((prev) => {
+                const alreadyExists = prev.some((item) => item.partner.id === selectedPartner.id)
+
+                if(alreadyExists) {
+                    return prev.map((item) =>
+                        item.partner.id === selectedPartner.id ? { ...item, lastMessage: { id: newMsg.id, content: messageText}}
                         : item
-                )
-            )
+                    )
+                }
+
+                return [
+                    {
+                        partner: selectedPartner,
+                        lastMessage: { id: newMsg.id, content: messageText }
+                    },
+                    ...prev
+                ]
+            })
 
             setMessageText("")
         } 

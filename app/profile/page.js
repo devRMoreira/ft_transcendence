@@ -6,9 +6,13 @@ import { GameRoundHistory } from "@/components/GameRoundHistory"
 import { fetchMatchData } from "@/services/api"
 import { useEffect, useState } from "react";
 import { ExpandMore } from '@mui/icons-material'
+import { useSearchParams } from "next/navigation";
 
 export default function ProfilePage()
 {
+    const searchParams = useSearchParams()
+    const targetUserId = searchParams.get("targetUserId")
+
     const [userData, setUserData] = useState();
     const [matchHistory, setMatchHistory] = useState();
     const [loading, setLoading] = useState(true);
@@ -18,13 +22,13 @@ export default function ProfilePage()
         async function loadUserProfile()
         {
             try {
-                const userProfileData = await getUserData()
+                const userProfileData = await getUserData(targetUserId)
                 setUserData(userProfileData)
             }
             catch (error) { console.error("Failed to load user profile:", error) }
 
             try {
-                const matchHistoryData = await fetchUserMatchHistory()
+                const matchHistoryData = await fetchUserMatchHistory(targetUserId)
                 setMatchHistory(matchHistoryData)
             }
             catch (error) { 
@@ -35,29 +39,18 @@ export default function ProfilePage()
             setLoading(false);
         }
         loadUserProfile()
-    }, [])
+    }, [targetUserId])
 
-
-/*     const getMatchData = useCallback(async () => {
-		try {
-			const data = await fetchMatchData(matchId)
-			setError("")
-			setMatch(data)
-		} catch (error) {
-			setError(error.message)
-		}
-	}, [matchId]) */
-
-
-    if (loading) return (
-        <Container maxWidth="md">
-            <Box sx={{
-                minHeight: "100dvh",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center"
-            }}></Box>
-        </Container>
+    if (loading) 
+        return (
+            <Container maxWidth="md">
+                <Box sx={{
+                    minHeight: "100dvh",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}></Box>
+            </Container>
         );
 
     const joinDateOnly = userData?.createdAt ? new Date(userData.createdAt).toISOString().split("T")[0] : "Unknown";

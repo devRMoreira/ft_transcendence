@@ -12,6 +12,7 @@ import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import SendIcon from '@mui/icons-material/Send';
 import { getFriends, getPendingReqSent, getPendingReqReceived, getFriendStatus, sendFriendReq, acceptFriendReq, cancelFriendReq, declineFriendReq } from "../../services/friends";
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation"
 
 export default function FriendsPage()
 {
@@ -22,6 +23,15 @@ export default function FriendsPage()
     const [receivedReqs, setReceivedReqs] =  useState([])
     const [addFriendInput, setAddFriendInput] = useState("")
     const [loading, setLoading] = useState(false)
+    const router = useRouter();
+
+    const handleStartChat = (friendUserId, friendName) => {
+        router.push(`/messages?targetUserId=${friendUserId}&name=${encodeURIComponent(friendName)}`)
+    }
+
+    const handleOpenProfile = (friendUserId) => {
+        router.push(`/profile?targetUserId=${friendUserId}`)
+    }
 
     // REDIRECT TO SIGNIN / SIGNUP if not logged in
     //
@@ -172,12 +182,9 @@ export default function FriendsPage()
                             </Button>
                         </Paper>
 
-                        <Accordion
-                            expanded={expanded === 'add'} 
-                            disableGutters
-                            elevation={2}
-                        >
-                            {/* Required for proper expansion/retraction */}
+                    {/* ADD FRIENDS */}
+
+                        <Accordion expanded={expanded === 'add'} disableGutters elevation={2}>
                             <AccordionSummary sx={{ display: 'none' }} /> 
                             <AccordionDetails sx={{ p: 0, backgroundColor: 'background.lighter' }}>
                                 <Stack onSubmit={handleAddFriend} component="form" direction="row" sx={{
@@ -206,7 +213,8 @@ export default function FriendsPage()
                             </AccordionDetails>
                         </Accordion>
 
-                        {/* SENT REQUESTS */}
+                    {/* SENT REQUESTS */}
+
                         <Accordion expanded={expanded === 'sent'} disableGutters elevation={2}>
                             <AccordionSummary sx={{ display: 'none' }} /> 
                             <AccordionDetails sx={{ p: 0, backgroundColor: 'background.lighter' }}>
@@ -235,7 +243,8 @@ export default function FriendsPage()
                             </AccordionDetails>
                         </Accordion>
 
-                        {/* RECEIVED REQUESTS */}
+                    {/* RECEIVED REQUESTS */}
+
                         <Accordion expanded={expanded === 'received'} disableGutters elevation={2}>
                             <AccordionSummary sx={{ display: 'none' }} /> 
                             <AccordionDetails sx={{ p: 0, backgroundColor: 'background.lighter' }}>
@@ -271,6 +280,8 @@ export default function FriendsPage()
                             </AccordionDetails>
                         </Accordion>
                         
+                    {/* CURRENT FRIENDS LIST */}
+
                         <Stack divider={<Divider flexItem variant="fullWidth" sx={{ borderBottomWidth: 2 }}/>}>
                             {friends.length == 0 ? (
                                 <Typography align="center" sx={{py: 3, color: "theme.secondary"}}>
@@ -278,7 +289,7 @@ export default function FriendsPage()
                                 </Typography>
                             ) : (
                                 friends.map((friend) => (
-                                <Box key={friend.id}> {/* exists only to contain the enclosed elements in a single UI elem */}
+                                <Box key={friend.id}>
                                     <Stack direction="row" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 1, py: 0.3, px: 5, }}>
                                         <Typography sx={{flex: 5}}>
                                             {friend.name}
@@ -286,11 +297,11 @@ export default function FriendsPage()
 
                                         <Stack direction="row" spacing={1} sx={{flex: 1}}>
 
-                                            <IconButton aria-label="open chat" /* onClick={} */>
+                                            <IconButton aria-label="open chat" onClick={() => handleStartChat(friend.id, friend.name)}>
                                                 <ChatIcon/>
                                             </IconButton>
 
-                                            <IconButton aria-label="open profile" /* onClick={} */>
+                                            <IconButton aria-label="open profile" onClick={() => handleOpenProfile(friend.id)}>
                                                 <AccountBoxIcon/>
                                             </IconButton>
 
@@ -303,6 +314,7 @@ export default function FriendsPage()
                                 ))
                             )}
                         </Stack>
+                        
                     </Stack>
                 </Paper>
             </Box>

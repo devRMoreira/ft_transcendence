@@ -1,14 +1,26 @@
-export async function fetchUserMatchHistory() {
-	const res = await fetch(`/api/match_history`)
+export async function fetchUserMatchHistory(targetUserId) {
+    const url = targetUserId ? `/api/match_history?targetUserId=${targetUserId}` : `/api/match_history`
+	
+    try {
+        const res = await fetch(url , { method: "GET" })
 
-	if (!res.ok) throw new Error("Something went wrong")
+        if (!res.ok)
+            return []
 
-	return await res.json()
+        const data = await res.json()
+        return Array.isArray(data) ? data : []
+    }
+    catch 
+    {
+        return []
+    }
+
 }
 
-export async function getUserData()
+export async function getUserData(targetUserId)
 {
-    const res = await fetch(`/api/profile?`, { method: "GET" })
+    const url = targetUserId ? `/api/profile?targetUserId=${targetUserId}` : `/api/profile`
+    const res = await fetch(url , { method: "GET" })
 
     const data = await res.json();
     return data.userData
