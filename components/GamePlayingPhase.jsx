@@ -45,7 +45,7 @@ export function GamePlayingPhase({ match, you, onPlay }) {
 				</Box>
 
 				<Stack direction="row" spacing={1} sx={styles.header.center}>
-					{carryOver > 0 && (
+					{(carryOver > 0 && round !== 6) && (
 						<Chip
 							color="warning"
 							label={

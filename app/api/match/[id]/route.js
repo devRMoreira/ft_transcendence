@@ -1,6 +1,7 @@
 import { getPlayerRole } from "@/lib/game/authorize"
 import { sanitizeMatchForPlayer } from "@/lib/game/sanitize"
 import { prisma } from "@/lib/prisma"
+import { matchTick } from "@/services/matchActivity"
 
 export async function GET(req, { params }) {
 	const { id } = await params
@@ -12,5 +13,6 @@ export async function GET(req, { params }) {
 	const role = await getPlayerRole(match)
 	if (!role) return Response.json({ error: "Not a player in this match" }, { status: 403 })
 
-	return Response.json(sanitizeMatchForPlayer(match, role))
+	const current = await matchTick(match, role)
+	return Response.json(sanitizeMatchForPlayer(current, role))
 }

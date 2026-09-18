@@ -3,6 +3,7 @@ import { draftPick } from "@/lib/game/draft"
 import { initMatch } from "@/lib/game/match"
 import { sanitizeMatchForPlayer } from "@/lib/game/sanitize"
 import { prisma } from "@/lib/prisma"
+import { matchTick } from "@/services/matchActivity"
 
 export async function POST(req, { params }) {
 	const { id } = await params
@@ -30,5 +31,6 @@ export async function POST(req, { params }) {
 
 	const updated = await prisma.match.update({ where: { id: match.id }, data: updateData })
 
-	return Response.json(sanitizeMatchForPlayer(updated, role))
+	const current = await matchTick(updated, role)
+	return Response.json(sanitizeMatchForPlayer(current, role))
 }

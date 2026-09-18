@@ -1,18 +1,39 @@
 "use client"
 
 import LoadingButton from "@/components/LoadingButton"
-import { newMatchSubmit, newAIMatchSubmit } from "@/services/api"
-
-import { Alert, Box, Button, FormControl, Stack, TextField, Typography } from "@mui/material"
+import { newMatchSubmit, newAIMatchSubmit, fetchActiveMatch } from "@/services/api"
+// prettier-ignore
+import { Alert, Box, Button, CircularProgress, FormControl, Stack, TextField, Typography } from "@mui/material"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 export default function PlayPage() {
 	const router = useRouter()
 	const [mode, setMode] = useState("select")
 	const [opponentName, setOpponentName] = useState("")
 	const [error, setError] = useState("")
+	const [activeMatch, setActiveMatch] = useState(null)
+	const [loadingActive, setLoadingActive] = useState(true)
 	const [loading, setLoading] = useState(false)
+
+	const handleActiveMatch = useCallback(async () => {
+		try {
+			const data = await fetchActiveMatch()
+			setActiveMatch(data.active ? data.match : null)
+		} catch (e) {
+			setActiveMatch(null)
+		} finally {
+			setLoadingActive(false)
+		}
+	}, [])
+
+	useEffect(() => {
+		handleActiveMatch()
+
+		const interval = setInterval(handleActiveMatch, 2000)
+
+		return () => clearInterval(interval)
+	}, [handleActiveMatch])
 
 	const handleRealMatch = async (e) => {
 		e.preventDefault()
@@ -41,6 +62,31 @@ export default function PlayPage() {
 		} finally {
 			setLoading(false)
 		}
+	}
+
+	if (loadingActive) {
+		return (
+			<Box sx={{ textAlign: "center", mt: 8 }}>
+				<CircularProgress />
+			</Box>
+		)
+	}
+
+	if (activeMatch) {
+		return (
+			<Box sx={{ maxWidth: "400px", mx: "auto", mt: 8, textAlign: "center" }}>
+				<Typography variant="h5" sx={{ mb: 2 }}>
+					You have a match in progress
+				</Typography>
+				<Button
+					variant="contained"
+					size="large"
+					onClick={() => router.push(`/play/${activeMatch.id}`)}
+				>
+					Resume match
+				</Button>
+			</Box>
+		)
 	}
 
 	if (mode === "select") {
