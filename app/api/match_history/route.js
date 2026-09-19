@@ -16,7 +16,7 @@ export async function GET(request) {
     try {
         const matches = await prisma.match.findMany({
             where: {
-                status: { in: ["COMPLETED", "ABANDONED"] },
+                status: { in: ["COMPLETE", "ABANDONED"] },
                 OR: [
                     { player1Id: userId },
                     { player2Id: userId }
@@ -32,10 +32,14 @@ export async function GET(request) {
             }
         })
 
-        return Response.json( matches )
+        return Response.json({
+            userId,
+            matches
+        })
     }
-    catch
+    catch (error)
     {
-        return Response.json([], { status: 500 })
+        console.error("Match history route error:", error)
+        return Response.json({ userId, matches: [], error: "Internal Server Error" }, { status: 500 })
     }
 }

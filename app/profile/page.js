@@ -13,10 +13,17 @@ export default function ProfilePage()
     const searchParams = useSearchParams()
     const targetUserId = searchParams.get("targetUserId")
 
-    const [userData, setUserData] = useState();
-    const [matchHistory, setMatchHistory] = useState();
-    const [loading, setLoading] = useState(true);
-    const [expandedMatch, setExpandedMatch] = useState(false); 
+    const [userProfileId, setUserProfileId] = useState()
+    const [userData, setUserData] = useState()
+    const [matchHistory, setMatchHistory] = useState()
+    const [loading, setLoading] = useState(true)
+    
+    const [expandedMatchId, setExpandedMatchId] = useState(false)
+
+    const handleAccordionChange = (matchId) => (event, isExpanded) => {
+        setExpandedMatchId(isExpanded ? matchId : false);
+    };
+
 
     useEffect(() => {
         async function loadUserProfile()
@@ -28,8 +35,9 @@ export default function ProfilePage()
             catch (error) { console.error("Failed to load user profile:", error) }
 
             try {
-                const matchHistoryData = await fetchUserMatchHistory(targetUserId)
-                setMatchHistory(matchHistoryData)
+                const { userId, matches } = await fetchUserMatchHistory(targetUserId)
+                setMatchHistory(matches)
+                setUserProfileId(userId)
             }
             catch (error) { 
                 console.error("Failed to load user profile:", error) 
@@ -38,6 +46,7 @@ export default function ProfilePage()
 
             setLoading(false);
         }
+
         loadUserProfile()
     }, [targetUserId])
 
@@ -98,14 +107,39 @@ export default function ProfilePage()
                                     No matches played yet
                                 </Typography>
                             ) : (
-                                matchHistory.map((match) =>  
-                                    <Accordion key={match.id} /* expanded={expanded === 'add'} */ disableGutters elevation={2}>
-                                        <AccordionSummary>Match VS USER (X : Y score)</AccordionSummary> 
-                                        <AccordionDetails sx={{ p: 0, /* backgroundColor: 'background.lighter' */ }}>
-                                            <GameRoundHistory /* log={log} you={you} */ />
-                                        </AccordionDetails>
-                                    </Accordion>
-                                )
+                                matchHistory.map((match) => {
+                                    const { winner, scores, log } = match.state
+	                                
+                                    const userId = userProfileId
+                                    const isMatchComplete = match.status === "COMPLETE"
+                                    const userWon = match.winnerId === userId
+                                    const isPlayer1 = match.player1?.id === userId
+                                    const you = isPlayer1 ? match.player1 : match.player2
+                                    
+                                    const opponent = isPlayer1 ? match.player2 : match.player1;
+                                    const opponentName = match.isVsAI ? "AI" : (opponent?.name || "Unknown");
+
+                                    const finalScore = isMatchComplete
+                                        ? (isPlayer1 ? `${scores.player1} : ${scores.player2}` : `${scores.player2} : ${scores.player1}`)
+                                        : "- : -";
+
+                                    return(
+                                        <Accordion key={match.id} disableGutters elevation={2}
+                                            expanded={expandedMatchId === match.id}
+                                            onChange={handleAccordionChange(match.id)}
+                                            disabled={!isMatchComplete}
+                                        >
+                                            <AccordionSummary expandIcon={isMatchComplete ? <ExpandMore /> : null}>
+                                                    <Typography color={!isMatchComplete ? "warning" : userWon ? "success" : "error"}>
+                                                        {!isMatchComplete ? "Abandoned" : userWon ? "Victory" : "Defeat"} ({finalScore}) VS {opponentName} </Typography>
+                                                    <Typography> </Typography>
+                                            </AccordionSummary> 
+                                            <AccordionDetails sx={{ pb: 3, /* backgroundColor: 'background.lighter' */ }}>
+                                                {<GameRoundHistory log={log} you={you}/>}
+                                            </AccordionDetails>
+                                        </Accordion>
+                                    )
+                                })
                             )}
 
                         </Stack>

@@ -5,16 +5,17 @@ export async function fetchUserMatchHistory(targetUserId) {
         const res = await fetch(url , { method: "GET" })
 
         if (!res.ok)
-            return []
+            return { userId: null, matches: [] }
 
         const data = await res.json()
-        return Array.isArray(data) ? data : []
+        return {
+            userId: data.userId || null,
+            matches: Array.isArray(data.matches) ? data.matches : []
+        }
     }
-    catch 
-    {
-        return []
+    catch {
+        return { targetUserId: null, matches: [] }
     }
-
 }
 
 export async function getUserData(targetUserId)
