@@ -3,10 +3,10 @@
 import { Container, Box, Stack, Typography, Paper, Divider, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import { getUserData, fetchUserMatchHistory } from "@/services/profile";
 import { GameRoundHistory } from "@/components/GameRoundHistory"
-import { fetchMatchData } from "@/services/api"
 import { useEffect, useState } from "react";
 import { ExpandMore } from '@mui/icons-material'
 import { useSearchParams } from "next/navigation";
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 
 export default function ProfilePage()
 {
@@ -108,13 +108,13 @@ export default function ProfilePage()
                                 </Typography>
                             ) : (
                                 matchHistory.map((match) => {
-                                    const { winner, scores, log } = match.state
+                                    const { winner, scores, log } = match.state || {}
 	                                
                                     const userId = userProfileId
                                     const isMatchComplete = match.status === "COMPLETE"
                                     const userWon = match.winnerId === userId
                                     const isPlayer1 = match.player1?.id === userId
-                                    const you = isPlayer1 ? match.player1 : match.player2
+                                    const you = isPlayer1 ? "player1" : "player2"
                                     
                                     const opponent = isPlayer1 ? match.player2 : match.player1;
                                     const opponentName = match.isVsAI ? "AI" : (opponent?.name || "Unknown");
