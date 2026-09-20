@@ -124,12 +124,13 @@ export default function MessagesPage()
     return(
         <Container maxWidth="lg">
             <Box sx={{
-                minHeight: "100dvh",
+                mt: 3,
+                minHeight: "75dvh",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
             }}>
-                <Paper sx={{ width: "100%", height: "80dvh", display: "flex", overflow: "hidden"}}>
+                <Paper sx={{ width: "100%", height: "75vh", display: "flex", overflow: "hidden"}}>
                     <Stack direction="row" sx={{ width: "100%", display: "flex", }}>
 
                         {/* LEFT PANE WITH CONVERSATION LIST */}
@@ -171,11 +172,8 @@ export default function MessagesPage()
                                     <Typography sx={{pr: 2, fontWeight: 700}}>
                                         Chat with {selectedPartner?.name}
                                     </Typography>
-                                    <IconButton aria-label="invite to game">
+                                    <IconButton aria-label="open profile">
                                         <AccountBoxIcon/>
-                                    </IconButton>
-                                    <IconButton aria-label="invite to game">
-                                        <StyleIcon/>
                                     </IconButton>
                                 </Stack>
                                 <Box sx={{ flex: 1, overflowY: "auto", mt: 1, py: 1.5, px:2, backgroundColor: "background.lighter"}}>

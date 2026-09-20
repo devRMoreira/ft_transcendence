@@ -135,7 +135,8 @@ export default function FriendsPage()
     return(
         <Container maxWidth="sm">
             <Box sx={{
-                minHeight: "100dvh",
+                mt: 3,
+                minHeight: "80dvh",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
@@ -303,10 +304,6 @@ export default function FriendsPage()
 
                                             <IconButton aria-label="open profile" onClick={() => handleOpenProfile(friend.id)}>
                                                 <AccountBoxIcon/>
-                                            </IconButton>
-
-                                            <IconButton aria-label="invite to game" /* onClick={} */>
-                                                <StyleIcon/>
                                             </IconButton>
                                         </Stack>
                                     </Stack>

@@ -98,7 +98,8 @@ export default function ProfilePage()
     return(
         <Container maxWidth="md">
             <Box sx={{
-                minHeight: "100dvh",
+                mt: 3,
+                minHeight: "80dvh",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"

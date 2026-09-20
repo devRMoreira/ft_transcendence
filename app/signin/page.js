@@ -43,7 +43,7 @@ export default function SignInPage()
 	return (
 	<Container maxWidth="xs">
 		<Box sx={{
-			minHeight: "100dvh",
+			minHeight: "80dvh",
 			display: "flex",
 			alignItems: "center",
 			justifyContent: "center"
