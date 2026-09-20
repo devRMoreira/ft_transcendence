@@ -99,21 +99,24 @@ export default function ProfilePage()
         <Container maxWidth="md">
             <Box sx={{
                 mt: 3,
-                minHeight: "80dvh",
+                minHeight: "75dvh",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
             }}>
-                <Paper sx={{ width: "100%" }}>
-                    <Box sx={{ 
+                <Paper sx={{ width: "100%" }} >
+                    <Paper elevation={3} sx={{ 
                         display: 'flex', 
                         justifyContent: 'space-between', 
                         alignItems: 'center', 
                         px: 4, 
-                        py: 2, 
-                        mt: 1 
+                        pt: 3, 
+                        pb: 2,
+                        backgroundColor: 'background.lighter',
+                        borderBottomLeftRadius: 0, 
+                        borderBottomRightRadius: 0,
                     }}>
-                        <Typography component="h1" variant="h4">
+                        <Typography component="h1" variant="h4" sx={{fontWeight: "bold", }}>
                             {userData?.name}
                         </Typography>
 
@@ -128,7 +131,7 @@ export default function ProfilePage()
                                 Remove Friend
                             </Button>
                         )}
-                    </Box>
+                    </Paper>
 
                     <Divider variant="fullWidth" sx={{ borderBottomWidth: 2 }}></Divider>
                     <Stack spacing={3} sx={{ px:4 , py: 2, }}>
@@ -141,6 +144,7 @@ export default function ProfilePage()
                             </Typography>
                         </Stack>
 
+                        {!targetUserId && ( 
                         <Stack>
                             <Typography sx={{color: 'text.secondary'}}>
                                 Email
@@ -149,6 +153,7 @@ export default function ProfilePage()
                                 {userData.email}
                             </Typography>
                         </Stack>
+                        )}
 
                         <Stack>
                             <Typography sx={{color: 'text.secondary'}}>
@@ -181,6 +186,7 @@ export default function ProfilePage()
                                             expanded={expandedMatchId === match.id}
                                             onChange={handleAccordionChange(match.id)}
                                             disabled={!isMatchComplete}
+                                            sx={{ backgroundColor: expandedMatchId == match.id ? 'background.lighter' : "background.primary", }}
                                         >
                                             <AccordionSummary expandIcon={isMatchComplete ? <ExpandMore /> : null}>
                                                     <Typography color={!isMatchComplete ? "warning" : userWon ? "success" : "error"}>

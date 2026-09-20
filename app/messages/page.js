@@ -2,10 +2,10 @@
 
 import { Container, Box, Stack, Typography, Paper, Divider, Button, IconButton, TextField } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
-import StyleIcon from '@mui/icons-material/Style';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { getConversationList, getMessageHistory, sendMessage } from "../../services/messages.js";
 import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation"
 import { useSearchParams } from "next/navigation";
 
 export default function MessagesPage()
@@ -22,6 +22,12 @@ export default function MessagesPage()
     const [loadingConversationList, setLoadingConversationList] = useState(false)
     const [loadingMessageHistory, setLoadingMessageHistory] = useState(false)
     const [sending, setSending] = useState(false)
+
+    const router = useRouter();
+
+    const handleOpenProfile = (targetUserId) => {
+        router.push(`/profile?targetUserId=${targetUserId}`)
+    }
 
     const messagesEndRef = useRef(null)
 
@@ -172,7 +178,7 @@ export default function MessagesPage()
                                     <Typography sx={{pr: 2, fontWeight: 700}}>
                                         Chat with {selectedPartner?.name}
                                     </Typography>
-                                    <IconButton aria-label="open profile">
+                                    <IconButton aria-label="open profile" onClick={() => handleOpenProfile(selectedPartner?.id)}>
                                         <AccountBoxIcon/>
                                     </IconButton>
                                 </Stack>

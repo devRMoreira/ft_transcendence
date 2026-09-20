@@ -46,6 +46,13 @@ export function Navbar() {
 							>
 								Groups
 							</Button>
+                            <Button
+								component={Link}
+								href="/leaderboard"
+								sx={navStyles.linkButton(isActive("/play"))}
+							>
+								Leaderboard
+							</Button>
 						</>
 					)}
 				</Box>
