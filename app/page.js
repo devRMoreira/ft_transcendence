@@ -12,6 +12,12 @@ export default async function HomePage() {
 			<h1>Home Page</h1>
 			Logged as: {userName}
 			<GroupInvitations />
+			<Button href="/play" variant="contained">
+				Play
+			</Button>
+			<Button href="/friends" variant="contained">
+				Friends
+			</Button>
 			<Button href="/groups" variant="contained">
 				Groups
 			</Button>
