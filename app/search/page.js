@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Button, Container, Grid, TextField, Drawer, Stack, FormControl, FormLabel, FormHelperText, FormControlLabel, Checkbox, MenuItem, Select, InputLabel } from "@mui/material";
+import { Box, Button, Container, Grid, TextField, Drawer, Stack, FormControl, FormLabel, FormHelperText, FormControlLabel, Checkbox, MenuItem, Select, InputLabel, Pagination } from "@mui/material";
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
@@ -11,11 +11,13 @@ import { cardSearchParams } from "../../services/search";
 import { useEffect, useState } from "react";
 
 const RARITY_OPTIONS = ["Amethyst", "Platinum", "Gold", "Silver"]
+const ITEMS_PER_PAGE = 15
 
 export default function SearchPage()
 {
     //loading card data
     const [cards, setCards] = useState([])
+    const [page, setPage] = useState(1);
     //toggles drawer on click
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     //search/sort fields and their default values 
@@ -49,10 +51,15 @@ export default function SearchPage()
     };
 
     const handleApplyParams = (e) => {
-        if (e) e.preventDefault();
-        setAppliedParams(formState);
-        setIsDrawerOpen(false);
-    };
+        if (e) e.preventDefault()
+        setAppliedParams(formState)
+        setPage(1)
+        setIsDrawerOpen(false)
+    }
+
+    const totalPages = Math.ceil(cards.length / ITEMS_PER_PAGE);
+    const startIndex = (page - 1) * ITEMS_PER_PAGE;
+    const displayedCards = cards.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     useEffect(() => {
         async function loadCards()
@@ -70,7 +77,7 @@ export default function SearchPage()
     };
 
     return(
-        <Container maxWidth="xl" sx={{p: 0}}>
+        <Container maxWidth="lg" sx={{p: 0}}>
             <Box sx={{ 
                 p: 2,
                 display: "flex",
@@ -78,13 +85,15 @@ export default function SearchPage()
                 height: "clamp(10px, 10dvh)",
                 width: "100%"
             }}>
-                <Button variant="text" color="secondary" startIcon={<KeyboardDoubleArrowDownIcon/>} onClick={toggleDrawer(true)}>
-                    Filter
-                </Button>
-                <TextField onChange={handleSearchChange} value={formState.searchQuery} placeholder="Enter card name" sx={{}}/>
-                <Button variant="text" color="primary" startIcon={<SearchRoundedIcon/>} onClick={handleApplyParams}>
-                    Search
-                </Button>
+                <Box sx={{pt: 2, pb: 1}}>
+                    <Button variant="text" color="secondary" startIcon={<KeyboardDoubleArrowDownIcon/>} onClick={toggleDrawer(true)}>
+                        Filter
+                    </Button>
+                    <TextField onChange={handleSearchChange} value={formState.searchQuery} placeholder="Enter card name" sx={{}}/>
+                    <Button variant="text" color="primary" startIcon={<SearchRoundedIcon/>} onClick={handleApplyParams}>
+                        Search
+                    </Button>
+                </Box>
 
                 <Drawer anchor="top" open={isDrawerOpen} onClose={toggleDrawer(false)} spacing={10}>
                     <Stack spacing={1} sx={{p: 3, alignItems: "center",}}>
@@ -134,8 +143,8 @@ export default function SearchPage()
                     </Stack>
                 </Drawer>
             </Box>
-            <Grid container spacing={0.5}  sx={{ p: 0, justifyContent: "center",}}>
-                {cards.map((card) => (
+            <Grid container spacing={1}  sx={{ p: 0, justifyContent: "center",}}>
+                {displayedCards.map((card) => (
                     <Grid key={card.id}>
                         <CardDisplay
                             name={card.name}
@@ -149,6 +158,17 @@ export default function SearchPage()
                     </Grid>
                 ))}
             </Grid>
+          
+            {totalPages > 1 && (
+                <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+                    <Pagination 
+                        count={totalPages} 
+                        page={page} 
+                        onChange={(e, value) => setPage(value)} 
+                        color="primary" 
+                    />
+                </Box>
+            )}
         </Container>
     );
 }

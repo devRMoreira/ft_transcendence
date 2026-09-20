@@ -39,7 +39,7 @@ export default function CardDisplay({
   return (
       <Card elevation={5} sx={{
         aspectRatio: 5/7,
-        width: 'clamp(85px, 8dvw, 95px)',
+        width: 'clamp(85px, 8dvw, 110px)',
         border: 2,
         borderColor: cardRarity.border,
         background: "gray",
@@ -65,7 +65,7 @@ export default function CardDisplay({
                   textAlign: "center",
                   fontSize: "0.8em",
                   fontWeight: "bold",
-                  py: 0.3
+                  py: 0.5
                   }}> {/* CARD NAME */}
                   {name}
                 </Typography>
