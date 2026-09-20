@@ -1,7 +1,7 @@
 "use client"
 
 import LoadingButton from "@/components/LoadingButton"
-import { Alert, Box, Container, FormControl, FormLabel, Link, Paper, Stack, TextField, Typography } from "@mui/material"
+import { Alert, Box, Checkbox, Container, FormControl, FormControlLabel, FormLabel, Link, Paper, Stack, TextField, Typography } from "@mui/material"
 import { useState } from "react"
 import NextLink from "next/link";
 
@@ -15,8 +15,8 @@ export default function SignupPage()
 {
 	const router = useRouter()
 
-	const [form, setForm] = useState({name: "", email: "", password: "", cpassword: ""})
-	const [error, setError] = useState({name: "", email: "", password: "", cpassword: "", page:""})
+	const [form, setForm] = useState({name: "", email: "", password: "", cpassword: "", acceptedTerms: false})
+	const [error, setError] = useState({name: "", email: "", password: "", cpassword: "", acceptedTerms: "", page:""})
 
 	const [loading, setLoading] = useState(false)
 
@@ -29,7 +29,7 @@ export default function SignupPage()
 
 	const addError = (field, msg) => {setError(prev => ({...prev, [field]: msg}))}
 
-	const validateInputs = ({name, email, password, cpassword}) =>
+	const validateInputs = ({name, email, password, cpassword, acceptedTerms}) =>
 	{
 		let isValid = true
 
@@ -57,6 +57,12 @@ export default function SignupPage()
 			isValid = false
 		}
 
+		if(!acceptedTerms)
+		{
+			addError("acceptedTerms", "You must accept the Terms of Service and Privacy Policy.")
+			isValid = false
+		}
+
 		return isValid
 	}
 
@@ -64,13 +70,14 @@ export default function SignupPage()
 	{
 		e.preventDefault()
 
-		setError({name: "", email: "", password: "", cpassword: "", page:""})
+		setError({name: "", email: "", password: "", cpassword: "", acceptedTerms: "", page:""})
 
 		const data = {
 			name: form.name.trim(),
 			email: form.email.trim(),
 			password: form.password.trim(),
 			cpassword: form.cpassword.trim(),
+			acceptedTerms: form.acceptedTerms,
 		}
 
 		if(!validateInputs(data))
@@ -164,6 +171,26 @@ export default function SignupPage()
 						color={error.cpassword ? 'error' : 'primary'}
 						onChange={handleOnChange}
 						required fullWidth/>
+					</FormControl>
+
+					<FormControl error={Boolean(error.acceptedTerms)}>
+						<FormControlLabel
+							control={
+								<Checkbox
+									checked={form.acceptedTerms}
+									onChange={(e) => {
+										setForm(prev => ({...prev, acceptedTerms: e.target.checked}))
+										setError(prev => ({...prev, acceptedTerms: ""}))
+									}}
+								/>
+							}
+							label={
+								<Typography variant="body2">
+									I agree to the <Link href="/terms" target="_blank" rel="noopener noreferrer">Terms of Service</Link> and <Link href="/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link>.
+								</Typography>
+							}
+						/>
+						{error.acceptedTerms && <Typography variant="caption" color="error">{error.acceptedTerms}</Typography>}
 					</FormControl>
 
 					<LoadingButton type="submit" loading={loading}

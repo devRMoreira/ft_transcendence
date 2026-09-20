@@ -17,12 +17,12 @@ export async function POST(request)
 		)
 	}
 
-	const {password, name} = body
+	const {password, name, acceptedTerms} = body
 	const email = body.email?.trim().toLowerCase()
 
-	if (!email || !password || !name)
+	if (!email || !password || !name || acceptedTerms !== true)
 		return Response.json(
-			{ error: "All fields are required" },
+			{ error: "You must accept the Terms of Service and Privacy Policy" },
 			{ status: 400 })
 
 	if(!EMAIL_REGEX.test(email))

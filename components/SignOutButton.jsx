@@ -6,7 +6,7 @@ import { Button } from "@mui/material";
 export default function SignOutButton() {
   return (
     <Button
-      variant="outlined"
+      variant="contained"
       onClick={() => signOut({ callbackUrl: "/signin" })}
       sx={{
         "&:hover": {
