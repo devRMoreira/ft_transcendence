@@ -2,10 +2,10 @@
 
 import { Container, Box, Stack, Typography, Paper, Divider, Button, IconButton, TextField } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
-import StyleIcon from '@mui/icons-material/Style';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { getConversationList, getMessageHistory, sendMessage } from "../../services/messages.js";
 import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation"
 import { useSearchParams } from "next/navigation";
 
 export default function MessagesPage()
@@ -22,6 +22,12 @@ export default function MessagesPage()
     const [loadingConversationList, setLoadingConversationList] = useState(false)
     const [loadingMessageHistory, setLoadingMessageHistory] = useState(false)
     const [sending, setSending] = useState(false)
+
+    const router = useRouter();
+
+    const handleOpenProfile = (targetUserId) => {
+        router.push(`/profile?targetUserId=${targetUserId}`)
+    }
 
     const messagesEndRef = useRef(null)
 
@@ -124,12 +130,13 @@ export default function MessagesPage()
     return(
         <Container maxWidth="lg">
             <Box sx={{
-                minHeight: "100dvh",
+                mt: 3,
+                minHeight: "75dvh",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
             }}>
-                <Paper sx={{ width: "100%", height: "80dvh", display: "flex", overflow: "hidden"}}>
+                <Paper sx={{ width: "100%", height: "75vh", display: "flex", overflow: "hidden"}}>
                     <Stack direction="row" sx={{ width: "100%", display: "flex", }}>
 
                         {/* LEFT PANE WITH CONVERSATION LIST */}
@@ -171,11 +178,8 @@ export default function MessagesPage()
                                     <Typography sx={{pr: 2, fontWeight: 700}}>
                                         Chat with {selectedPartner?.name}
                                     </Typography>
-                                    <IconButton aria-label="invite to game">
+                                    <IconButton aria-label="open profile" onClick={() => handleOpenProfile(selectedPartner?.id)}>
                                         <AccountBoxIcon/>
-                                    </IconButton>
-                                    <IconButton aria-label="invite to game">
-                                        <StyleIcon/>
                                     </IconButton>
                                 </Stack>
                                 <Box sx={{ flex: 1, overflowY: "auto", mt: 1, py: 1.5, px:2, backgroundColor: "background.lighter"}}>

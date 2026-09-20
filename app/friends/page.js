@@ -6,7 +6,6 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ChatIcon from '@mui/icons-material/Chat';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import StyleIcon from '@mui/icons-material/Style';
 import CheckIcon from '@mui/icons-material/Check';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import SendIcon from '@mui/icons-material/Send';
@@ -135,7 +134,8 @@ export default function FriendsPage()
     return(
         <Container maxWidth="sm">
             <Box sx={{
-                minHeight: "100dvh",
+                mt: 3,
+                minHeight: "75dvh",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
@@ -143,7 +143,7 @@ export default function FriendsPage()
                 <Paper sx={{ width: "100%" }}>
                     <Stack>
 
-                        <Typography component="h1" variant="h5" sx={{ mt: 1, p:1.5 , px:5}}>
+                        <Typography component="h1" variant="h4" sx={{ mt: 1, p:1.5 , px:5, fontWeight: "bold"}}>
                             Friends
                         </Typography>
 
@@ -303,10 +303,6 @@ export default function FriendsPage()
 
                                             <IconButton aria-label="open profile" onClick={() => handleOpenProfile(friend.id)}>
                                                 <AccountBoxIcon/>
-                                            </IconButton>
-
-                                            <IconButton aria-label="invite to game" /* onClick={} */>
-                                                <StyleIcon/>
                                             </IconButton>
                                         </Stack>
                                     </Stack>

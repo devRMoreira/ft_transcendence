@@ -85,18 +85,18 @@ export default function SearchPage()
                 height: "clamp(10px, 10dvh)",
                 width: "100%"
             }}>
-                <Box sx={{pt: 2, pb: 1}}>
-                    <Button variant="text" color="secondary" startIcon={<KeyboardDoubleArrowDownIcon/>} onClick={toggleDrawer(true)}>
+                <Stack direction="row" spacing={2} sx={{pt: 2, pb: 1}}>
+                    <Button variant="contained" color="secondary" startIcon={<KeyboardDoubleArrowDownIcon/>} onClick={toggleDrawer(true)}>
                         Filter
                     </Button>
                     <TextField onChange={handleSearchChange} value={formState.searchQuery} placeholder="Enter card name" sx={{}}/>
-                    <Button variant="text" color="primary" startIcon={<SearchRoundedIcon/>} onClick={handleApplyParams}>
+                    <Button variant="contained" color="primary" startIcon={<SearchRoundedIcon/>} onClick={handleApplyParams}>
                         Search
                     </Button>
-                </Box>
+                </Stack>
 
                 <Drawer anchor="top" open={isDrawerOpen} onClose={toggleDrawer(false)} spacing={10}>
-                    <Stack spacing={1} sx={{p: 3, alignItems: "center",}}>
+                    <Stack spacing={2} sx={{p: 3, alignItems: "center",}}>
                         <FormControl component="fieldset">
                             <FormLabel sx={{py: 1, alignText: "center"}}>Filter by Rarity</FormLabel>
                                 {RARITY_OPTIONS.map((rar) => (
@@ -137,7 +137,7 @@ export default function SearchPage()
                                 <MenuItem value="rarity_desc"><ArrowDropUpIcon/> Rarity </MenuItem>
                             </Select>
                         </FormControl>
-                        <Button onClick={handleApplyParams} variant="text" color="secondary" startIcon={<CheckIcon/>} sx={{width: "clamp(150px, 10dvw, 170px)"}}>
+                        <Button onClick={handleApplyParams} variant="contained" color="secondary" startIcon={<CheckIcon/>} sx={{width: "clamp(150px, 10dvw, 170px)"}}>
                             Apply
                         </Button>
                     </Stack>
