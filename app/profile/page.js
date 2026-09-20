@@ -1,7 +1,8 @@
 "use client"
 
-import { Container, Box, Stack, Typography, Paper, Divider, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import { Container, Box, Button, Dialog, DialogTitle, Stack, Typography, Paper, Divider, Accordion, AccordionSummary, AccordionDetails, DialogContent, DialogContentText, DialogActions } from "@mui/material";
 import { getUserData, fetchUserMatchHistory } from "@/services/profile";
+import { removeFriend } from "@/services/friends";
 import { GameRoundHistory } from "@/components/GameRoundHistory"
 import { useEffect, useState } from "react";
 import { ExpandMore } from '@mui/icons-material'
@@ -18,12 +19,15 @@ export default function ProfilePage()
     const [matchHistory, setMatchHistory] = useState()
     const [loading, setLoading] = useState(true)
     
+    const [friendshipStatus, setFriendshipStatus] = useState("NONE")
+    const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+    const [actionLoading, setActionLoading] = useState(false)
+    
     const [expandedMatchId, setExpandedMatchId] = useState(false)
 
     const handleAccordionChange = (matchId) => (event, isExpanded) => {
         setExpandedMatchId(isExpanded ? matchId : false);
     };
-
 
     useEffect(() => {
         async function loadUserProfile()
@@ -44,11 +48,38 @@ export default function ProfilePage()
                 setMatchHistory([])
             }
 
+            if (targetUserId) {
+                try {
+                    const res = await fetch(`/api/friends?type=status&targetId=${targetUserId}`);
+                    const json = await res.json();
+                    if (json?.data?.status) {
+                        setFriendshipStatus(json.data.status);
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch friendship status:", error);
+                }
+            }
+
             setLoading(false);
         }
 
         loadUserProfile()
     }, [targetUserId])
+
+    const handleRemoveFriend = async () => {
+        setActionLoading(true)
+        
+        const res = await removeFriend(targetUserId)
+
+        if (res.error) {
+            console.error("Failed to remove friend:", res.error)
+        } else {
+            setFriendshipStatus("NONE")
+            setOpenConfirmDialog(false)
+        }
+
+        setActionLoading(false);
+    }
 
     if (loading) 
         return (
@@ -60,7 +91,7 @@ export default function ProfilePage()
                     justifyContent: "center"
                 }}></Box>
             </Container>
-        );
+        )
 
     const joinDateOnly = userData?.createdAt ? new Date(userData.createdAt).toISOString().split("T")[0] : "Unknown";
 
@@ -73,9 +104,30 @@ export default function ProfilePage()
                 justifyContent: "center"
             }}>
                 <Paper sx={{ width: "100%" }}>
-                    <Typography component="h1" variant="h4" sx={{ px:4 , py: 2, mt: 1}}>
-                        {userData.name}
-                    </Typography>
+                    <Box sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center', 
+                        px: 4, 
+                        py: 2, 
+                        mt: 1 
+                    }}>
+                        <Typography component="h1" variant="h4">
+                            {userData?.name}
+                        </Typography>
+
+                        {/* Show button only if friendship is ACCEPTED */}
+                        {friendshipStatus === "ACCEPTED" && (
+                            <Button 
+                                variant="outlined" 
+                                color="error" 
+                                startIcon={<PersonRemoveIcon />}
+                                onClick={() => setOpenConfirmDialog(true)}
+                            >
+                                Remove Friend
+                            </Button>
+                        )}
+                    </Box>
 
                     <Divider variant="fullWidth" sx={{ borderBottomWidth: 2 }}></Divider>
                     <Stack spacing={3} sx={{ px:4 , py: 2, }}>
@@ -145,6 +197,35 @@ export default function ProfilePage()
                         </Stack>
                     </Stack>
                 </Paper>
+
+                <Dialog 
+                    open={openConfirmDialog} 
+                    onClose={() => setOpenConfirmDialog(false)}
+                >
+                    <DialogTitle>Remove Friend</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Are you sure you want to remove <strong>{userData?.name}</strong> from your friends list?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions sx={{ pb: 2, px: 3 }}>
+                        <Button 
+                            onClick={() => setOpenConfirmDialog(false)} 
+                            disabled={actionLoading}
+                        >
+                            Cancel
+                        </Button>
+                        <Button 
+                            onClick={handleRemoveFriend} 
+                            color="error" 
+                            variant="contained" 
+                            disabled={actionLoading}
+                        >
+                            {actionLoading ? "Removing..." : "Remove"}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
             </Box>
         </Container>
     );

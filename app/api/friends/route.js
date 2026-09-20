@@ -219,18 +219,24 @@ export async function DELETE(request) {
         if (!userId) 
             return Response.json({ error: "Unauthorized" }, { status: 401 })
 
-        const { requestId, action } = await request.json()
+        const { requestId, targetUserId, action } = await request.json()
 
-        if (!requestId) {
+        if (!requestId && !targetUserId) {
             return Response.json( { success: false, error: "Missing requestId" } )
         }
 
-        const existing = await prisma.friendship.findUnique({
-            where: { id: requestId },
-        })
+        const existing = requestId ? await prisma.friendship.findUnique({ where: { id: requestId }, })
+            : await prisma.friendship.findFirst({
+                where: {
+                    OR: [
+                        { requesterId: userId, addresseeId: targetUserId },
+                        { requesterId: targetUserId, addresseeId: userId },
+                    ],
+                },
+            })
 
         if (!existing) {
-            return Response.json( { success: false, error: "Friend request not found" } )
+            return Response.json( { success: false, error: "No friendship/request found" } )
         }
 
         // Action-based permission checks
@@ -242,13 +248,17 @@ export async function DELETE(request) {
             return Response.json( { success: false, error: "Not authorized to decline this request" } )
         }
 
+        if (action === "remove" && existing.status !== "ACCEPTED"){
+            return Response.json( { success: false, error: "Not currently friends" } ) 
+        }
+
         // General fallback check: user must be either requester or addressee
         if (existing.requesterId !== userId && existing.addresseeId !== userId) {
             return Response.json( { success: false, error: "Unauthorized" } )
         }
 
         await prisma.friendship.delete({
-            where: { id: requestId },
+            where: { id: existing.id },
         })
 
         return Response.json({ success: true })
