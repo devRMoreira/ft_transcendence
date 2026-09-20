@@ -16,6 +16,7 @@ model User {
   name         String?   @unique
   email        String    @unique
   passwordHash String?   // null if a user only ever signs in via OAuth
+  emailVerified DateTime?
   image        String?   // here for scalability purposes
   isBot        Boolean   @default(false) // to be used for AI matches, always true otherwise
   lastSeen     DateTime? // bump on each authenticated request if you add online status later
