@@ -2,7 +2,7 @@ import { Box, Container, Link, Stack, Typography } from "@mui/material";
 
 export const metadata = {
   title: "Terms of Service | CardGame",
-  description: "The rules for using CardGame.",
+  description: "Terms for the CardGame student project.",
 };
 
 export default function TermsOfServicePage() {
@@ -14,72 +14,72 @@ export default function TermsOfServicePage() {
             Back to CardGame
           </Link>
           <Typography component="h1" variant="h3" sx={{ mt: 3, mb: 1 }}>
-            Terms of Service
+            Terms of Use
           </Typography>
           <Typography color="text.secondary">Effective date: September 20, 2026</Typography>
         </Box>
 
         <Stack spacing={3}>
           <Box>
-            <Typography component="h2" variant="h5" gutterBottom>1. Agreement</Typography>
+            <Typography component="h2" variant="h5" gutterBottom>1. Educational project</Typography>
             <Typography>
-              These Terms govern your access to and use of CardGame, including accounts, matches, groups, posts, friends, and direct messages. By creating an account or using the service, you agree to these Terms. If you do not agree, do not use CardGame.
+                CardGame is a student project developed by learners in the 42 Network curriculum for the final ft_transcendence project. It is a prototype for learning, demonstration, and academic evaluation. It is not a commercial product, paid service, or production platform. By creating an account or using the prototype, you agree to these Terms of Use. If you do not agree, do not use it.
             </Typography>
           </Box>
 
           <Box>
             <Typography component="h2" variant="h5" gutterBottom>2. Accounts</Typography>
             <Typography>
-              You must provide accurate information, keep your credentials confidential, and be responsible for activity performed through your account. You may not impersonate another person, create an account through automated means, or use an account after we have suspended or terminated it. Notify the project maintainers if you suspect unauthorized access.
+              Provide reasonably accurate information, keep your credentials confidential, and remain responsible for activity performed through your account. Do not impersonate another person, create accounts through automated means, or use another person&apos;s account. The student team may reset or remove accounts as part of development or evaluation. Notify the team or deployment administrator if you suspect unauthorized access.
             </Typography>
           </Box>
 
           <Box>
             <Typography component="h2" variant="h5" gutterBottom>3. Acceptable use</Typography>
             <Typography>
-              You may use CardGame for lawful personal and recreational purposes. You must not harass, threaten, defame, or target other users; publish illegal, hateful, sexually explicit, or harmful material; send spam or malicious code; exploit bugs; interfere with matches or the service; attempt unauthorized access; scrape or collect user information; or use the service to violate another person&apos;s rights or applicable law.
+              Use the prototype only for lawful educational, testing, or recreational purposes. Do not harass, threaten, defame, or target other users; publish illegal, hateful, sexually explicit, or harmful material; send spam or malicious code; exploit bugs; interfere with matches or the application; attempt unauthorized access; scrape or collect user information; or violate another person&apos;s rights or applicable law.
             </Typography>
           </Box>
 
           <Box>
             <Typography component="h2" variant="h5" gutterBottom>4. User content and moderation</Typography>
             <Typography>
-              You retain ownership of content you submit. You grant CardGame the limited, non-exclusive permission to host, store, display, and transmit that content only as needed to provide the features you use. You are responsible for your content and represent that you have the rights needed to submit it. We may remove content or restrict accounts that breach these Terms, create risk, or disrupt the community. We are not required to monitor every message or post.
+              You retain ownership of content you submit. You allow the project to store, display, and transmit that content only as needed to run and evaluate the features you use. You are responsible for your content and must have the right to submit it. The student team or educational evaluators may remove content or restrict accounts that breach these Terms, create risk, or interfere with the project. Do not submit confidential, sensitive, or valuable content because this is an educational prototype.
             </Typography>
           </Box>
 
           <Box>
             <Typography component="h2" variant="h5" gutterBottom>5. Game rules and service availability</Typography>
             <Typography>
-              Match outcomes and game features may change as CardGame is developed. We may modify, suspend, or discontinue features, including saved match state, without guaranteeing uninterrupted availability. Do not rely on CardGame as a storage service for important information.
+              Match outcomes and features may change during development. The application may be unavailable, reset, modified, or discontinued at any time, including for demonstrations, grading, maintenance, or deployment changes. Saved state and other data may be lost. Do not rely on CardGame as a storage service.
             </Typography>
           </Box>
 
           <Box>
             <Typography component="h2" variant="h5" gutterBottom>6. Intellectual property</Typography>
             <Typography>
-              CardGame and its original software, design, names, and content are owned by the project operators or their licensors. These Terms give you permission to use the service, not to copy, sell, sublicense, reverse engineer, or commercially exploit it except where applicable law permits or we give written permission.
+              The project&apos;s original software, design, names, and content belong to their respective student authors or licensors. These Terms grant permission to use the prototype for its educational purpose; they do not grant permission to copy, sell, sublicense, or commercially exploit project materials except where applicable law permits or the rights holder gives permission. 42 Network names and trademarks remain the property of their respective owners.
             </Typography>
           </Box>
 
           <Box>
             <Typography component="h2" variant="h5" gutterBottom>7. Disclaimers and limitation of liability</Typography>
             <Typography>
-              CardGame is provided on an &quot;as is&quot; and &quot;as available&quot; basis. To the extent permitted by law, the project operators disclaim warranties of availability, accuracy, fitness for a particular purpose, and non-infringement. We are not liable for indirect, incidental, special, consequential, or lost-data damages arising from use of the service. Nothing in these Terms limits liability that cannot lawfully be limited.
+              CardGame is provided for educational demonstration on an &quot;as is&quot; and &quot;as available&quot; basis. The student team does not promise continuous availability, complete accuracy, security, suitability, or preservation of data. To the extent permitted by law, the team and project contributors are not liable for losses, interruptions, unauthorized access, or lost data resulting from use of the prototype. Nothing in these Terms limits liability that cannot lawfully be limited.
             </Typography>
           </Box>
 
           <Box>
             <Typography component="h2" variant="h5" gutterBottom>8. Suspension, termination, and changes</Typography>
             <Typography>
-              You may stop using CardGame at any time. We may suspend or terminate access for violations, security concerns, legal requirements, or operational reasons. Sections that by their nature should survive termination, including ownership, user responsibility, disclaimers, and limitations of liability, will continue to apply. We may update these Terms; continued use after the effective date means you accept the updated version.
+              You may stop using CardGame at any time. The student team may suspend access, reset data, or end the deployment for development, evaluation, security, legal, or academic reasons. The project may update these Terms as it evolves; the effective date identifies the current version. Provisions about content, intellectual property, disclaimers, and limitations continue where applicable after use ends.
             </Typography>
           </Box>
 
           <Box>
             <Typography component="h2" variant="h5" gutterBottom>9. Contact</Typography>
             <Typography>
-              Questions about these Terms should be directed to the CardGame project maintainers through the official project repository or the administrator of your deployment. These Terms are governed by the laws applicable to the project operator, without changing any mandatory consumer protections that apply where you live.
+              Questions about these Terms should be directed to the student team or the administrator of the deployment you are using. These Terms are project documentation, not legal advice. They should be reviewed by the responsible educational institution before this prototype is made publicly available or used for any commercial purpose.
             </Typography>
           </Box>
         </Stack>
