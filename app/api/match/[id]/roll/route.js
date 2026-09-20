@@ -2,6 +2,7 @@ import { getPlayerRole } from "@/lib/game/authorize"
 import { rollRoundStat } from "@/lib/game/match"
 import { sanitizeMatchForPlayer } from "@/lib/game/sanitize"
 import { prisma } from "@/lib/prisma"
+import { matchTick } from "@/services/matchActivity"
 
 export async function POST(req, { params }) {
 	const { id } = await params
@@ -23,5 +24,6 @@ export async function POST(req, { params }) {
 		data: { state: nextState },
 	})
 
-	return Response.json(sanitizeMatchForPlayer(updated, role))
+	const current = await matchTick(updated, role)
+	return Response.json(sanitizeMatchForPlayer(current, role))
 }

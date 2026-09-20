@@ -23,6 +23,14 @@ export function newMatchSubmit(opponentName) {
 	})
 }
 
+export function newAIMatchSubmit() {
+	return apiFetch("/api/match", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ isVsAI: true }),
+	})
+}
+
 export function fetchMatchData(matchId) {
 	return apiFetch(`/api/match/${matchId}`)
 }
@@ -41,4 +49,8 @@ export function submitMatchAction(matchId, action, body) {
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(body || {}),
 	})
+}
+
+export function fetchActiveMatch() {
+	return apiFetch("/api/match/active")
 }

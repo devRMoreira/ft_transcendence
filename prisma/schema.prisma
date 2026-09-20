@@ -227,6 +227,7 @@ enum MatchStatus {
   DRAFTING
   PLAYING
   COMPLETE
+  ABANDONED
 }
 
 model Match {
@@ -237,6 +238,8 @@ model Match {
   isVsAI    Boolean  @default(false)
   status    MatchStatus @default(CHOOSING)
   state     Json?       // live match state, data varies with the game state
+  player1LastSeenAt DateTime?
+  player2LastSeenAt DateTime?
   playedAt  DateTime @default(now())
 
   player1 User  @relation("MatchPlayer1", fields: [player1Id], references: [id])
