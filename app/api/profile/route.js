@@ -1,16 +1,22 @@
 import { prisma } from "@/lib/prisma"
-
-// name
-// email
-// image placeholder?
-// joined on 
-// friends 
-// messages 
-// recent games / match history
+import { auth } from "@/auth"
 
 export async function GET(request)
 {
-    const userInfo = await prisma.user.findFirst({
+    const session = await auth()
+    const sessionUserId = session?.user?.id
+    
+    const { searchParams } = new URL(request.url);
+    const queryUserId = searchParams.get("targetUserId");
+
+    const userId = queryUserId || sessionUserId
+
+    if (!userId) 
+        return Response.json({ error: "Unauthorized" }, { status: 401 })
+
+    const userData = await prisma.user.findFirst({
+        where: 
+        { id: userId },
         select: {
             name: true,
             email: true,
@@ -18,7 +24,5 @@ export async function GET(request)
         },
     });
 
-    console.log(userInfo)
-    
-    return Response.json({ userInfo });
+    return Response.json({ userData });
 }

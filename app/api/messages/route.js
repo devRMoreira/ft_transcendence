@@ -16,7 +16,7 @@ export async function GET(request)
             return Response.json({ error: "Unauthorized" }, { status: 401 })
 
         if (!type) 
-            return Response.json({ error: "Missing fetch type" }, { status: 400 })
+            return Response.json( { success: false, error: "Missing fetch type" } )
 
         if (type === "conversations")
         {
@@ -61,7 +61,7 @@ export async function GET(request)
         else if (type === "history") 
         {
             if (!targetId) {
-                return Response.json({ error: "Missing targetId parameter" }, { status: 400 })
+                return Response.json( { success: false, error: "Missing targetId parameter" } )
             }
 
             const messages = await prisma.message.findMany({
@@ -91,10 +91,9 @@ export async function GET(request)
             return Response.json({ data: messages })
         }
 
-        return Response.json({ error: "Invalid type parameter" }, { status: 400 })
+        return Response.json( { success: false, error: "Invalid type parameter" } )
     }
     catch (error) {
-        console.error("API /messages error:", error)
         return Response.json({ error: "Internal server error" }, { status: 500 })
     }
 }
@@ -111,10 +110,10 @@ export async function POST(request) // SEND FRIEND REQUEST
         const { receiverId, content } = await request.json()
 
         if (!receiverId || !content?.trim()) 
-            return Response.json( { error: "Receiver ID and content are required." }, { status: 400 } )
+            return Response.json( { success: false, error: "Receiver ID and content are required" } )
 
         if (senderId === receiverId)
-            return Response.json( { error: "Cannot message self." }, { status: 400 } )
+            return Response.json( { success: false, error: "Cannot message self" } )
 
         const newMsg = await prisma.message.create({
             data: {
@@ -133,7 +132,6 @@ export async function POST(request) // SEND FRIEND REQUEST
     }
     
     catch (error) {
-        console.error("API /messages error:", error)
         return Response.json({ error: "Internal server error" }, { status: 500 })
     }
 }

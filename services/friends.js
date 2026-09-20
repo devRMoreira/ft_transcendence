@@ -112,3 +112,20 @@ export async function declineFriendReq(requestId) {
 
     return json
 }
+
+export async function removeFriend(targetUserId) {
+    const res = await fetch("/api/friends", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetUserId, action: "remove" }),
+    })
+
+    const json = await res.json().catch(() => ({}))
+
+    if (!res.ok) {
+        console.error(`Remove friend failed with status: ${res.status}`)
+        return { error: json.error || "Failed to remove friend" }
+    }
+
+    return json
+}
