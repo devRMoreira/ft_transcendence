@@ -1,16 +1,13 @@
 "use client"
 
-import { Container, Box, Button, Dialog, DialogTitle, Stack, Typography, Paper, Divider, Accordion, AccordionSummary, AccordionDetails, DialogContent, DialogContentText, DialogActions } from "@mui/material";
-import { getUserData, fetchUserMatchHistory } from "@/services/profile";
-import { removeFriend } from "@/services/friends";
-import { GameRoundHistory } from "@/components/GameRoundHistory"
+import { Container, Box, Stack, Typography, Paper, Divider } from "@mui/material";
+import { fetchLeaderboard } from "@/services/leaderboard";
 import { useEffect, useState } from "react";
-import { ExpandMore } from '@mui/icons-material'
-import { useSearchParams } from "next/navigation";
-import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 export default function LeaderboardPage()
 {
+
 
     return(
         <Container maxWidth="md">
@@ -31,17 +28,15 @@ export default function LeaderboardPage()
                         mt: 1 
                     }}>
                         <Typography component="h1" variant="h4">
-                            ACHIEVOS
+                            Leaderboard
                         </Typography>
                     </Box>
 
                     <Divider variant="fullWidth" sx={{ borderBottomWidth: 2 }}></Divider>
                     <Stack spacing={3} sx={{ px:4 , py: 2, }}>
-                        <Stack>
-                            <Typography sx={{color: 'text.secondary'}}>
-                                LEADERBOARD
-                            </Typography>
-                        </Stack>
+                        <Typography sx={{color: 'text.secondary'}}>
+                            LEADERBOARD
+                        </Typography>
                     </Stack>
                 </Paper>
 
