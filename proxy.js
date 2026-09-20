@@ -3,7 +3,7 @@ import { auth } from "@/auth"
 export default auth((req) => {
 	const isLoggedIn = Boolean(req.auth)
 	const { pathname } = req.nextUrl
-	const publicRoutes = ["/signin", "/signup"]
+	const publicRoutes = ["/signin", "/signup", "/terms", "/privacy"]
 	const isPublicRoute = publicRoutes.includes(pathname)
 
 	if (!isLoggedIn && !isPublicRoute)
