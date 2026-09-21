@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Alert, Button, CircularProgress, Container, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import GroupInvitations from "@/components/GroupInvitations";
 
 export default function GroupsPage() {
   const [state, setState] = useState({ loading: true, group: null, error: "" });
@@ -23,6 +24,7 @@ export default function GroupsPage() {
     <Container maxWidth="sm" sx={{ py: 6 }}>
       <Stack spacing={3}>
         <Typography component="h1" variant="h4">Groups</Typography>
+        <GroupInvitations />
         {state.error && <Alert severity="error">{state.error}</Alert>}
         {!state.error && state.group && (
           <Stack spacing={2}>
