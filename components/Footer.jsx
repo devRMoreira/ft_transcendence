@@ -3,12 +3,11 @@ import { Box, Container, Link, Stack, Typography } from "@mui/material"
 export function Footer() {
 	return (
 		<Box component="footer" sx={{ bgcolor: "background.paper", color: "text.primary", borderTop: 1, borderColor: "divider", boxShadow: 1, py: 2 }}>
-			<Container maxWidth="lg">
+			<Container maxWidth="lg" sx={{ display: "flex", justifyContent: "center" }}>
 				<Stack
 					direction={{ xs: "column", sm: "row" }}
 					spacing={2}
-					alignitems="center"
-					justifycontent="space-between"
+					sx={{ alignItems: "center", justifyContent: "center", width: "100%" }}
 				>
 					<Typography variant="body2" sx={{ color: "inherit", fontWeight: "bold" }}>
 						CardGame
