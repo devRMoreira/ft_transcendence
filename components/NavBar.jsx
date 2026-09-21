@@ -49,7 +49,7 @@ export function Navbar() {
                             <Button
 								component={Link}
 								href="/leaderboard"
-								sx={navStyles.linkButton(isActive("/play"))}
+								sx={navStyles.linkButton(isActive("/leaderboard"))}
 							>
 								Leaderboard
 							</Button>
