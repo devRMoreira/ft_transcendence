@@ -1,9 +1,9 @@
 "use client";
 
 import { Container, Box, Typography, Paper, Divider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress, Alert, Stack } from "@mui/material";
-import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import { fetchLeaderboard } from "@/services/leaderboard";
 import { useEffect, useState } from "react";
+import RankIcon from "@/components/RankIcon";
 
 export default function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState([])
@@ -26,23 +26,6 @@ export default function LeaderboardPage() {
 
     loadData()
   }, [])
-
-  const renderRank = (rank) => {
-    switch (rank) {
-      case 1:
-        return <EmojiEventsIcon sx={{ color: "#FFD700" }}/>
-      case 2:
-        return <EmojiEventsIcon sx={{ color: "#C0C0C0" }}/>
-      case 3:
-        return <EmojiEventsIcon sx={{ color: "#CD7F32" }}/>
-      default:
-        return (
-          <Typography variant="body2" sx={{ fontWeight: "bold", color: "text.secondary" }}>
-            {rank}
-          </Typography>
-        )
-    }
-  }
 
   return (
     <Container maxWidth="sm">
@@ -120,7 +103,7 @@ export default function LeaderboardPage() {
                         >
                           <TableCell align="center">
                             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                              {renderRank(player.rank)}
+                              <RankIcon rank={player.rank}/>
                             </Box>
                           </TableCell>
                           <TableCell sx={{ fontWeight: "bold" }}>

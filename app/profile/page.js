@@ -8,6 +8,9 @@ import { useEffect, useState } from "react";
 import { ExpandMore } from '@mui/icons-material'
 import { useSearchParams } from "next/navigation";
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import Achievements from "../../components/Achievements";
+
+
 
 export default function ProfilePage()
 {
@@ -154,6 +157,8 @@ export default function ProfilePage()
                             </Typography>
                         </Stack>
                         )}
+
+                        <Achievements userId={userProfileId} matches={matchHistory}></Achievements>
 
                         <Stack>
                             <Typography sx={{color: 'text.secondary'}}>
