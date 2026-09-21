@@ -9,7 +9,6 @@ export default function GroupSettingsPage() {
   const router = useRouter();
   const [group, setGroup] = useState(null);
   const [description, setDescription] = useState("");
-  const [requests, setRequests] = useState([]);
   const [userId, setUserId] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -20,8 +19,6 @@ export default function GroupSettingsPage() {
     if (!groupResponse.ok || groupData.role !== "ADMIN") throw new Error("Only admins can access settings");
     setGroup(groupData.group);
     setDescription(groupData.group.description || "");
-    const requestsResponse = await fetch(`/api/groups/${id}/requests`);
-    if (requestsResponse.ok) setRequests((await requestsResponse.json()).requests);
   }
 
   useEffect(() => {
@@ -31,8 +28,6 @@ export default function GroupSettingsPage() {
         if (!response.ok || groupData.role !== "ADMIN") throw new Error("Only admins can access settings");
         setGroup(groupData.group);
         setDescription(groupData.group.description || "");
-        const requestsResponse = await fetch(`/api/groups/${id}/requests`);
-        if (requestsResponse.ok) setRequests((await requestsResponse.json()).requests);
       })
       .catch((loadError) => setError(loadError.message));
   }, [id]);
@@ -63,16 +58,6 @@ export default function GroupSettingsPage() {
     }
   }
 
-  async function decideRequest(requestId, decision) {
-    const response = await fetch(`/api/groups/${id}/requests/${requestId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ decision }),
-    });
-    if (!response.ok) setError((await response.json()).error || "Unable to process request");
-    else load().catch((loadError) => setError(loadError.message));
-  }
-
   async function removeMember(memberId) {
     const response = await fetch(`/api/groups/${id}/members/${memberId}`, { method: "DELETE" });
     if (!response.ok) setError((await response.json()).error || "Unable to remove member");
@@ -97,8 +82,6 @@ export default function GroupSettingsPage() {
           <TextField label="Player ID, name, or email" value={userId} onChange={(event) => setUserId(event.target.value)} required />
           <Button type="submit" variant="outlined">Send invitation</Button>
         </Stack>
-        <Typography variant="h6">Join requests</Typography>
-        <List>{requests.map((request) => <ListItem key={request.id} secondaryAction={<Stack direction="row" spacing={1}><Button onClick={() => decideRequest(request.id, "ACCEPTED")}>Accept</Button><Button onClick={() => decideRequest(request.id, "REJECTED")}>Reject</Button></Stack>}><ListItemText primary={request.user.name || request.user.email} /></ListItem>)}</List>
         <Typography variant="h6">Members</Typography>
         <List>{group.members.map((member) => <ListItem key={member.id} secondaryAction={member.role !== "ADMIN" && <Button color="error" onClick={() => removeMember(member.user.id)}>Remove</Button>}><ListItemText primary={member.user.name || "Unnamed player"} secondary={member.role} /></ListItem>)}</List>
         <Button onClick={() => router.push(`/groups/${id}`)} variant="text">Back to group</Button>
