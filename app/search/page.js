@@ -6,7 +6,7 @@ import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrow
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CheckIcon from '@mui/icons-material/Check';
-import CardDisplay from "../../components/CardDisplay";
+import CardDisplay from "@/components/CardDisplay";
 import { cardSearchParams } from "../../services/search";
 import { useEffect, useState } from "react";
 
