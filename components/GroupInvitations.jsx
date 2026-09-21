@@ -30,6 +30,11 @@ export default function GroupInvitations() {
       return;
     }
 
+    if (decision === "ACCEPTED") {
+      window.location.reload();
+      return;
+    }
+
     setInvitations((current) => current.filter((invitation) => invitation.id !== invitationId));
   }
 
