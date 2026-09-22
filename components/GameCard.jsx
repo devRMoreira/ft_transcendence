@@ -26,7 +26,7 @@ export default function GameCard({ card, highlightStat, onClick, disabled, displ
 		>
 			<CardMedia
 				component="img"
-				image="/favicon.ico"
+				image={card.imageUrl}
 				alt={card.name}
 				sx={{
 					height: 56,
