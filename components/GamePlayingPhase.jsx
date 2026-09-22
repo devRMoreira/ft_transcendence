@@ -45,7 +45,7 @@ export function GamePlayingPhase({ match, you, onPlay }) {
 				</Box>
 
 				<Stack direction="row" spacing={1} sx={styles.header.center}>
-					{(carryOver > 0 && round !== 6) && (
+					{carryOver > 0 && round !== 6 && (
 						<Chip
 							color="warning"
 							label={
@@ -181,8 +181,8 @@ const styles = {
 		vs: { color: "primary.main", opacity: 0.6, my: { xs: 1, sm: 0 } },
 	},
 	emptyCardSlot: {
-		width: 140,
-		height: 210,
+		width: 145,
+		height: 225,
 		display: "flex",
 		alignItems: "center",
 		justifyContent: "center",

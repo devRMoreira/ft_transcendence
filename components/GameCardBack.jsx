@@ -10,8 +10,8 @@ export default function GameCardBack({ onClick, disabled, label }) {
 			variant="outlined"
 			onClick={clickable ? onClick : undefined}
 			sx={{
-				width: 140,
-				height: 210,
+				width: 145,
+				height: 225,
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",

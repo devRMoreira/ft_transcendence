@@ -14,10 +14,16 @@ export function GameDraftingPhase({ match, you, onPick }) {
 				{picksRemaining[you]} remaining
 			</Typography>
 
-			<Stack
-				direction="row"
-				spacing={1}
-				sx={{ mb: 4, flexWrap: "wrap", justifyContent: "center" }}
+			<Box
+				sx={{
+					display: "flex",
+					flexWrap: "wrap",
+					justifyContent: "center",
+					gap: 1.5,
+					maxWidth: 630,
+					mx: "auto",
+					mb: 4,
+				}}
 			>
 				{pool.map((slot) =>
 					slot.claimedBy === you ? (
@@ -31,7 +37,7 @@ export function GameDraftingPhase({ match, you, onPick }) {
 						/>
 					)
 				)}
-			</Stack>
+			</Box>
 
 			<Typography sx={{ mt: 1, textAlign: "center" }} gutterBottom>
 				Your hand so far
