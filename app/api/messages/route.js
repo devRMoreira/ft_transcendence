@@ -3,6 +3,39 @@ import { auth } from "@/auth"
 
 // get list of messages with various users, with most recent last messages in each being the sorting order
 
+async function checkIsFriend(receiverId, senderId) {
+    const friendship = await prisma.friendship.findFirst({
+        where: {
+            status: "ACCEPTED",
+            OR: [
+                { requesterId: receiverId, addresseeId: senderId },
+                { requesterId: senderId, addresseeId: receiverId },
+            ],
+        },
+    })
+    return !!friendship
+}
+
+async function getActiveFriendIds(userId) {
+    const friendships = await prisma.friendship.findMany({
+        where: {
+            status: "ACCEPTED",
+            OR: [
+                { requesterId: userId },
+                { addresseeId: userId },
+            ],
+        },
+        select: {
+            requesterId: true,
+            addresseeId: true,
+        },
+    })
+
+    return friendships.map((f) =>
+        f.requesterId === userId ? f.addresseeId : f.requesterId
+    )
+}
+
 export async function GET(request)
 {
     try {
@@ -20,11 +53,17 @@ export async function GET(request)
 
         if (type === "conversations")
         {
+            const friendIds = await getActiveFriendIds(userId)
+
+            if (friendIds.length === 0) {
+                return Response.json({ data: [] })
+            }
+
             const latestMessageList = await prisma.message.findMany({
                 where: {
                     OR: [
-                        { senderId: userId },
-                        { receiverId: userId},
+                        { senderId: userId, receiverId: { in: friendIds } },
+                        { receiverId: userId, senderId: { in: friendIds } },
                     ]
                 },
                 orderBy: { createdAt: "desc" },
@@ -64,6 +103,11 @@ export async function GET(request)
                 return Response.json( { success: false, error: "Missing targetId parameter" } )
             }
 
+            const isFriend = await checkIsFriend(userId, targetId)
+            if (!isFriend) {
+                return Response.json({ data: [], isFriend: false })
+            }
+
             const messages = await prisma.message.findMany({
                 where: {
                     OR: [
@@ -98,7 +142,8 @@ export async function GET(request)
     }
 }
 
-export async function POST(request) // SEND FRIEND REQUEST
+
+export async function POST(request)
 {
     try {
         const session = await auth()
@@ -114,6 +159,11 @@ export async function POST(request) // SEND FRIEND REQUEST
 
         if (senderId === receiverId)
             return Response.json( { success: false, error: "Cannot message self" } )
+
+        const isFriend = await checkIsFriend(receiverId, senderId)
+        if (!isFriend) {
+            return Response.json( { success: false, error: "Must be friends to send messages" } )
+        }
 
         const newMsg = await prisma.message.create({
             data: {

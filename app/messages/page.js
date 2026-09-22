@@ -4,6 +4,7 @@ import { Container, Box, Stack, Typography, Paper, Divider, Button, IconButton, 
 import SendIcon from '@mui/icons-material/Send';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { getConversationList, getMessageHistory, sendMessage } from "../../services/messages.js";
+import { getFriendStatus } from "../../services/friends";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation"
 import { useSearchParams } from "next/navigation";
@@ -176,11 +177,13 @@ export default function MessagesPage()
                             <Box sx={{display: "flex", flex: 1, overflowY: "auto", flexDirection: "column", minHeight: 0, mb: 1.5, }}>
                                 <Stack direction="row" spacing={0.5} sx={{ width: "100%", alignItems: "center"}}>
                                     <Typography sx={{pr: 2, fontWeight: 700}}>
-                                        Chat with {selectedPartner?.name}
+                                        Chat with {selectedPartner?.name ? selectedPartner?.name : "User"}
                                     </Typography>
-                                    <IconButton aria-label="open profile" onClick={() => handleOpenProfile(selectedPartner?.id)}>
-                                        <AccountBoxIcon/>
-                                    </IconButton>
+                                    {selectedPartner?.id && (
+                                        <IconButton aria-label="open profile" onClick={() => handleOpenProfile(selectedPartner?.id)}>
+                                            <AccountBoxIcon/>
+                                        </IconButton>
+                                    )}
                                 </Stack>
                                 <Box sx={{ flex: 1, overflowY: "auto", mt: 1, py: 1.5, px:2, backgroundColor: "background.lighter"}}>
                                     {messageHistory.map((msg) => (

@@ -3,10 +3,10 @@ export async function fetchFriendData(reqType)
     const res = await fetch(`/api/friends?type=${reqType}`, { method: "GET" })
     
     if (!res.ok) {
-        if (res.status === 401) return [];
+        if (res.status === 401) return []
 
-        console.error(`friend data query failed with status: ${res.status}`);
-        return [];
+        console.error(`friend data query failed with status: ${res.status}`)
+        return []
     }
     
     const json = await res.json()
@@ -15,23 +15,23 @@ export async function fetchFriendData(reqType)
 
 export async function getFriends() // fetch accepted friends to display in list
 {
-    return fetchFriendData("accepted");
+    return fetchFriendData("accepted")
 }
 
 export async function getPendingReqSent() // fetch requests to display in SENT
 {
-    return fetchFriendData("sent");
+    return fetchFriendData("sent")
 }
 
 export async function getPendingReqReceived() // fetch requests to display in RECEIVED
 {
-    return fetchFriendData("received");
+    return fetchFriendData("received")
 }
 
 export async function getFriendStatus(userId2) 
 {
     if (!userId2)
-        return [];
+        return []
 
     const res = await fetch(`/api/friends?type=status&targetId=${userId2}`, { method: "GET" })
     if (!res.ok)

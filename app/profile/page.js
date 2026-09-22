@@ -35,11 +35,18 @@ export default function ProfilePage()
     useEffect(() => {
         async function loadUserProfile()
         {
+            setLoading(true)
+            setFriendshipStatus("NONE")     
+            setUserData(null)
+            setMatchHistory(null)
+
             try {
                 const userProfileData = await getUserData(targetUserId)
                 setUserData(userProfileData)
             }
-            catch (error) { console.error("Failed to load user profile:", error) }
+            catch (error) {
+                console.error("Failed to load user profile:", error)
+            }
 
             try {
                 const { userId, matches } = await fetchUserMatchHistory(targetUserId)
@@ -124,7 +131,7 @@ export default function ProfilePage()
                         </Typography>
 
                         {/* Show button only if friendship is ACCEPTED */}
-                        {friendshipStatus === "ACCEPTED" && (
+                        {targetUserId && friendshipStatus === "ACCEPTED" && (
                             <Button 
                                 variant="outlined" 
                                 color="error" 
