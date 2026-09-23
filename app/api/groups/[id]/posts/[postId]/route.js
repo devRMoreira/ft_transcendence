@@ -20,6 +20,10 @@ export async function PATCH(request, { params }) {
     return Response.json({ error: "Only the author can edit this post" }, { status: 403 });
   }
 
+  if (Date.now() - post.createdAt.getTime() > 10 * 60 * 1000) {
+    return Response.json({ error: "Posts can only be edited within 10 minutes of publishing" }, { status: 403 });
+  }
+
   const body = await request.json();
   const content = typeof body.content === "string" ? body.content.trim() : "";
   if (!content || content.length > 2000) {

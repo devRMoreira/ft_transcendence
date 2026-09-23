@@ -25,7 +25,7 @@ export async function GET(request, { params }) {
   });
 
   if (!group) return Response.json({ error: "Group not found" }, { status: 404 });
-  return Response.json({ group, role: access.membership.role });
+  return Response.json({ group, role: access.membership.role, currentUserId: session.user.id });
 }
 
 export async function PATCH(request, { params }) {
@@ -55,6 +55,23 @@ export async function PATCH(request, { params }) {
   try {
     const group = await prisma.group.update({ where: { id }, data });
     return Response.json({ group });
+  } catch (error) {
+    if (error.code === "P2025") return Response.json({ error: "Group not found" }, { status: 404 });
+    throw error;
+  }
+}
+
+export async function DELETE(request, { params }) {
+  const session = await auth();
+  if (!session?.user?.id) return Response.json({ error: "Not logged in" }, { status: 401 });
+
+  const { id } = await params;
+  const access = await getAdminResponse(id, session.user.id);
+  if (access.error) return Response.json({ error: access.error }, { status: access.status });
+
+  try {
+    await prisma.group.delete({ where: { id } });
+    return Response.json({ success: true });
   } catch (error) {
     if (error.code === "P2025") return Response.json({ error: "Group not found" }, { status: 404 });
     throw error;
