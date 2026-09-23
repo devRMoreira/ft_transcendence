@@ -15,6 +15,8 @@ export default function GroupDetailsPage() {
   const [editingContent, setEditingContent] = useState("");
   const [error, setError] = useState("");
 
+  const editWindowMs = 10 * 60 * 1000;
+
   async function loadGroup() {
     const response = await fetch(`/api/groups/${id}`);
     const result = await response.json();
@@ -60,6 +62,11 @@ export default function GroupDetailsPage() {
   }
 
   function startEditing(post) {
+    if (Date.now() - new Date(post.createdAt).getTime() > editWindowMs) {
+      setError("Posts can only be edited within 10 minutes of publishing");
+      return;
+    }
+
     setEditingPostId(post.id);
     setEditingContent(post.content);
     setError("");
@@ -87,7 +94,7 @@ export default function GroupDetailsPage() {
   }
 
   function renderPost(post) {
-    const isWithinEditWindow = Date.now() - new Date(post.createdAt).getTime() <= 10 * 60 * 1000; //10 min.
+    const isWithinEditWindow = Date.now() - new Date(post.createdAt).getTime() <= editWindowMs;
     const canEdit = isWithinEditWindow && (post.author.id === data.currentUserId || (post.isAnnouncement && data.role === "ADMIN"));
     if (editingPostId === post.id) {
       return (
