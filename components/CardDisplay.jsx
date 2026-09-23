@@ -46,8 +46,9 @@ export default function CardDisplay({
         display: "flex",
         flexDirection: "column",
         }}>
-        <CardMedia component="img" image={"https://www.renshuu.org/i/img/landing_v2/landing_kao.png"} sx={{ // path does not work dynamically
-          flex: "0 0 56%", //rougly same as aspectRatio: 5/4,
+        <CardMedia component="img" image={imageUrl} sx={{ // path does not work dynamically
+            //flex: "0 0 56%", //rougly same as aspectRatio: 5/4,
+            aspectRatio: 5/4,
           }}/>
           <CardContent sx={{
             p: 0,
