@@ -25,7 +25,7 @@ export async function GET(request, { params }) {
   });
 
   if (!group) return Response.json({ error: "Group not found" }, { status: 404 });
-  return Response.json({ group, role: access.membership.role });
+  return Response.json({ group, role: access.membership.role, currentUserId: session.user.id });
 }
 
 export async function PATCH(request, { params }) {
