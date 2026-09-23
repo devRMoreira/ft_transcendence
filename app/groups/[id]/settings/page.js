@@ -64,6 +64,14 @@ export default function GroupSettingsPage() {
     else load().catch((loadError) => setError(loadError.message));
   }
 
+  async function deleteGroup() {
+    if (!window.confirm("Are you sure you want to delete this group? This action cannot be undone.")) return;
+
+    const response = await fetch(`/api/groups/${id}`, { method: "DELETE" });
+    if (!response.ok) setError((await response.json()).error || "Unable to delete group");
+    else router.push("/groups");
+  }
+
   if (error && !group) return <Alert severity="error" sx={{ m: 4 }}>{error}</Alert>;
   if (!group) return null;
 
@@ -84,6 +92,7 @@ export default function GroupSettingsPage() {
         </Stack>
         <Typography variant="h6">Members</Typography>
         <List>{group.members.map((member) => <ListItem key={member.id} secondaryAction={member.role !== "ADMIN" && <Button color="error" onClick={() => removeMember(member.user.id)}>Remove</Button>}><ListItemText primary={member.user.name || "Unnamed player"} secondary={member.role} /></ListItem>)}</List>
+        <Button onClick={deleteGroup} color="error" variant="outlined">Delete group</Button>
         <Button onClick={() => router.push(`/groups/${id}`)} variant="text">Back to group</Button>
       </Stack>
     </Container>
