@@ -11,6 +11,8 @@ export default function GroupDetailsPage() {
   const [data, setData] = useState(null);
   const [content, setContent] = useState("");
   const [isAnnouncement, setIsAnnouncement] = useState(false);
+  const [editingPostId, setEditingPostId] = useState(null);
+  const [editingContent, setEditingContent] = useState("");
   const [error, setError] = useState("");
 
   async function loadGroup() {
@@ -57,6 +59,57 @@ export default function GroupDetailsPage() {
     router.push("/groups");
   }
 
+  function startEditing(post) {
+    setEditingPostId(post.id);
+    setEditingContent(post.content);
+    setError("");
+  }
+
+  function cancelEditing() {
+    setEditingPostId(null);
+    setEditingContent("");
+  }
+
+  async function updatePost(event) {
+    event.preventDefault();
+    const response = await fetch(`/api/groups/${id}/posts/${editingPostId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: editingContent }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setError(result.error || "Unable to edit post");
+      return;
+    }
+    cancelEditing();
+    loadGroup().catch((loadError) => setError(loadError.message));
+  }
+
+  function renderPost(post) {
+    const isWithinEditWindow = Date.now() - new Date(post.createdAt).getTime() <= 10 * 60 * 1000; //10 min.
+    const canEdit = isWithinEditWindow && (post.author.id === data.currentUserId || (post.isAnnouncement && data.role === "ADMIN"));
+    if (editingPostId === post.id) {
+      return (
+        <ListItem key={post.id}>
+          <Stack component="form" spacing={1} onSubmit={updatePost} sx={{ width: "100%" }}>
+            <TextField value={editingContent} onChange={(event) => setEditingContent(event.target.value)} multiline required fullWidth />
+            <Stack direction="row" spacing={1}>
+              <Button type="submit" size="small" variant="contained">Save</Button>
+              <Button type="button" size="small" onClick={cancelEditing}>Cancel</Button>
+            </Stack>
+          </Stack>
+        </ListItem>
+      );
+    }
+
+    return (
+      <ListItem key={post.id} secondaryAction={canEdit && <Button size="small" onClick={() => startEditing(post)}>Edit</Button>}>
+        <ListItemText primary={post.content} secondary={post.author.name || "Unknown"} />
+      </ListItem>
+    );
+  }
+
   if (error && !data) return <Alert severity="error" sx={{ m: 4 }}>{error}</Alert>;
   if (!data) return null;
 
@@ -74,12 +127,12 @@ export default function GroupDetailsPage() {
           <Button onClick={leaveGroup} color="warning" variant="outlined">Leave group</Button>
         </Stack>
         <Typography variant="h5">Announcements</Typography>
-        <List>{announcements.map((post) => <ListItem key={post.id}><ListItemText primary={post.content} secondary={post.author.name || "Unknown"} /></ListItem>)}</List>
+        <List>{announcements.map(renderPost)}</List>
         <Typography variant="h5">Members</Typography>
         <List>{data.group.members.map((member) => <ListItem key={member.id}><ListItemText primary={member.user.name || "Unnamed player"} secondary={member.role} /></ListItem>)}</List>
         <Typography variant="h5">Posts</Typography>
         <Box sx={{ maxHeight: 320, overflowY: "auto", border: 1, borderColor: "divider", borderRadius: 1 }}>
-          <List>{posts.map((post) => <ListItem key={post.id}><ListItemText primary={post.content} secondary={post.author.name || "Unknown"} /></ListItem>)}</List>
+          <List>{posts.map(renderPost)}</List>
         </Box>
         <Stack component="form" spacing={2} onSubmit={createPost}>
           <TextField label="Write a post" value={content} onChange={(event) => setContent(event.target.value)} multiline required />
