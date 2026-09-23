@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e  # stop on the first error
+set -e
 
 echo "==> Checking for Docker..."
 if ! command -v docker &> /dev/null; then
@@ -7,14 +7,8 @@ if ! command -v docker &> /dev/null; then
   exit 1
 fi
 
-echo "==> Starting Postgres via Docker Compose..."
-docker compose up -d
-
-echo "==> Installing dependencies..."
-npm install
-
 if [ ! -f .env ]; then
-  echo "==> No .env found — creating one from .env.example"
+  echo "==> No .env found. Creating one from .env.example..."
   cp .env.example .env
 
   echo "==> Generating AUTH_SECRET..."
@@ -24,25 +18,23 @@ if [ ! -f .env ]; then
   else
     sed -i "s|^AUTH_SECRET=.*|AUTH_SECRET=\"$SECRET\"|" .env
   fi
-  echo "    AUTH_SECRET set. DATABASE_URL already matches docker-compose.yml — no changes needed there."
+
+  echo ""
+  echo "=========================================================="
+  echo " ⚠️ ACTION REQUIRED FOR OAUTH ⚠️"
+  echo "=========================================================="
+  echo " The .env file has been created and AUTH_SECRET generated."
+  echo " Please open the .env file now and paste your actual"
+  echo " GitHub and Google OAuth IDs and Secrets."
+  echo "=========================================================="
+  read -p "Press [Enter] ONLY AFTER you have saved the keys in .env..."
 else
-  echo "==> .env already exists, leaving it as-is."
+  echo "==> .env already exists. Proceeding with existing keys."
 fi
 
-echo "==> Waiting for Postgres to accept connections..."
-until docker compose exec -T db pg_isready -U cardgame &> /dev/null; do
-  echo "    ...still waiting"
-  sleep 1
-done
+echo "==> Building and deploying containers via Docker Compose..."
+docker compose up --build -d
 
-echo "==> Applying migrations..."
-npx prisma migrate dev
-
-echo "==> Generating Prisma Client..."
-npx prisma generate
-
-echo "==> Seeding the database..."
-npx prisma db seed || echo "    (seed skipped — fine if the card list is still empty)"
-
-echo "==> Starting the dev server..."
-npm run dev
+echo "==> Deployment initiated!"
+echo "    The database will initialize, apply migrations, and seed automatically."
+echo "    The app will be available at http://localhost:3000 in a few moments."
